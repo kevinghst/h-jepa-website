@@ -8,7 +8,7 @@ import fitz
 FIGURES = {
     "overview": "planning_illustrations/teaser",
     "abstractions": "abstraction/depth_probes",
-    "planning-results": "planning/depth_planning_combined",
+    "planning-results-pareto": "planning/depth_planning_pareto",
     "goal-costs": "heatmaps/composite_levels",
     "subgoal-tracking": "tmono/instance",
     "scene-diversity": "droid/scene_diversity_cube_droid",
