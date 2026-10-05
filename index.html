@@ -17,8 +17,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@500;600;700&amp;family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=afd7312bd7">
-  <script src="script.js?v=e9e15308e2" defer></script>
+  <link rel="stylesheet" href="styles.css?v=58c26c0e39">
+  <script src="script.js?v=0f78af9a2a" defer></script>
 </head>
 <body id="top">
   <a class="skip-link" href="#summary">Skip to content</a>
@@ -81,7 +81,7 @@
         <h2>Hierarchical planning</h2>
         <p>H-JEPA plans from coarse to fine: higher levels propose latent subgoals, and lower levels refine them into primitive actions. Each lower-level planner compares its predictions with the assigned subgoal in the higher level’s latent space. After executing an action prefix, planning repeats from the new observation.</p>
         <figure id="planning-animation" class="planning-animation">
-          <iframe src="assets/videos/hierarchical-planning.html?embed=1&amp;v=ea3f809498" title="Interactive hierarchical planning animation" loading="lazy"></iframe>
+          <iframe src="assets/videos/hierarchical-planning.html?embed=1&amp;v=0ecf016d77" title="Interactive hierarchical planning animation" loading="lazy"></iframe>
           </figure>
       </section>
       <section id="results" class="section">
@@ -108,6 +108,90 @@
           <a class="figure-link" href="assets/figures/planning-results.png" target="_blank" rel="noopener" aria-label="Open the planning results at full size"><img src="assets/figures/planning-results.png" width="2600" height="1388" alt="Planning success versus compute and hierarchy depth across FourRoom, AntMaze, Cube, and Push-T, comparing LeWM, H-JEPA, and HWM." loading="lazy"></a>
           <figcaption><strong>Fig. 3: Planning across compute budgets and hierarchy depths.</strong> Top: success versus planner FLOPs, including forward and backward passes; bold curves indicate Pareto fronts. Bottom: depth comparisons on a separate set of 50 tasks per environment, with LeWM and H-JEPA settings selected under a 100-TFLOP budget. Error bars show one standard error over three seeds.</figcaption>
         </figure>
+        <section id="planning-executions" class="execution-gallery" aria-labelledby="execution-heading">
+          <h4 id="execution-heading">Planning in action</h4>
+          <p>Example executions comparing LeWM and H-JEPA, with the starting observation and goal shown alongside each rollout.</p>
+          <div class="execution-column-labels" aria-hidden="true">
+            <span>Example 1</span>
+            <span>Example 2</span>
+          </div>
+          <div class="execution-row">
+            <h5>FourRoom</h5>
+            <div class="execution-pair">
+              <figure>
+                <video width="1072" height="304" controls muted loop playsinline preload="metadata" aria-label="FourRoom, example 1: LeWM and H-JEPA execution comparison">
+                  <source src="assets/videos/executions/fourroom/fourroom_ep28.mp4" type="video/mp4">
+                  <a href="assets/videos/executions/fourroom/fourroom_ep28.mp4">Download the FourRoom example 1 video.</a>
+                </video>
+                <figcaption>Example 1</figcaption>
+              </figure>
+              <figure>
+                <video width="1072" height="304" controls muted loop playsinline preload="metadata" aria-label="FourRoom, example 2: LeWM and H-JEPA execution comparison">
+                  <source src="assets/videos/executions/fourroom/fourroom_ep31.mp4" type="video/mp4">
+                  <a href="assets/videos/executions/fourroom/fourroom_ep31.mp4">Download the FourRoom example 2 video.</a>
+                </video>
+                <figcaption>Example 2</figcaption>
+              </figure>
+            </div>
+          </div>
+          <div class="execution-row">
+            <h5>AntMaze</h5>
+            <div class="execution-pair">
+              <figure>
+                <video width="1072" height="304" controls muted loop playsinline preload="metadata" aria-label="AntMaze, example 1: LeWM and H-JEPA execution comparison">
+                  <source src="assets/videos/executions/ant/ant_ep29.mp4" type="video/mp4">
+                  <a href="assets/videos/executions/ant/ant_ep29.mp4">Download the AntMaze example 1 video.</a>
+                </video>
+                <figcaption>Example 1</figcaption>
+              </figure>
+              <figure>
+                <video width="1072" height="304" controls muted loop playsinline preload="metadata" aria-label="AntMaze, example 2: LeWM and H-JEPA execution comparison">
+                  <source src="assets/videos/executions/ant/ant_ep35.mp4" type="video/mp4">
+                  <a href="assets/videos/executions/ant/ant_ep35.mp4">Download the AntMaze example 2 video.</a>
+                </video>
+                <figcaption>Example 2</figcaption>
+              </figure>
+            </div>
+          </div>
+          <div class="execution-row">
+            <h5>Push-T</h5>
+            <div class="execution-pair">
+              <figure>
+                <video width="1072" height="304" controls muted loop playsinline preload="metadata" aria-label="Push-T, example 1: LeWM and H-JEPA execution comparison">
+                  <source src="assets/videos/executions/pusht/pusht_ep7.mp4" type="video/mp4">
+                  <a href="assets/videos/executions/pusht/pusht_ep7.mp4">Download the Push-T example 1 video.</a>
+                </video>
+                <figcaption>Example 1</figcaption>
+              </figure>
+              <figure>
+                <video width="1072" height="304" controls muted loop playsinline preload="metadata" aria-label="Push-T, example 2: LeWM and H-JEPA execution comparison">
+                  <source src="assets/videos/executions/pusht/pusht_ep10.mp4" type="video/mp4">
+                  <a href="assets/videos/executions/pusht/pusht_ep10.mp4">Download the Push-T example 2 video.</a>
+                </video>
+                <figcaption>Example 2</figcaption>
+              </figure>
+            </div>
+          </div>
+          <div class="execution-row">
+            <h5>Cube</h5>
+            <div class="execution-pair">
+              <figure>
+                <video width="1072" height="304" controls muted loop playsinline preload="metadata" aria-label="Cube, example 1: LeWM and H-JEPA execution comparison">
+                  <source src="assets/videos/executions/cube/cube_ep4.mp4" type="video/mp4">
+                  <a href="assets/videos/executions/cube/cube_ep4.mp4">Download the Cube example 1 video.</a>
+                </video>
+                <figcaption>Example 1</figcaption>
+              </figure>
+              <figure>
+                <video width="1072" height="304" controls muted loop playsinline preload="metadata" aria-label="Cube, example 2: LeWM and H-JEPA execution comparison">
+                  <source src="assets/videos/executions/cube/cube_ep7.mp4" type="video/mp4">
+                  <a href="assets/videos/executions/cube/cube_ep7.mp4">Download the Cube example 2 video.</a>
+                </video>
+                <figcaption>Example 2</figcaption>
+              </figure>
+            </div>
+          </div>
+        </section>
         <p>To isolate the value of distinct representations, we compare against HWM with matched data and training settings, replacing upper-level encoders with identity maps. HWM benefits from temporal hierarchy in a shared latent space. H-JEPA improves further on AntMaze and Cube; on AntMaze, three-level H-JEPA achieves nearly twice HWM’s success.</p>
         <h3 id="why-hierarchy">Why hierarchy helps</h3>
         <p><strong>A better space for measuring progress.</strong> A fine-grained representation may assign a large distance to states that differ in pose but are equally close to the goal. Projecting a level-1 rollout into a more abstract latent space improves planning even without invoking upper-level planners. Across every tested multilevel AntMaze model, at least one upper-level cost improves success over the native level-1 cost.</p>
@@ -115,26 +199,21 @@
           <a class="figure-link" href="assets/figures/goal-costs.png" target="_blank" rel="noopener" aria-label="Open the goal-cost visualization at full size"><img src="assets/figures/goal-costs.png" width="975" height="479" alt="Goal-cost surfaces in different latent spaces illustrate how upper-level representations change the planning objective." loading="lazy"></a>
           <figcaption><strong>Fig. 4: The representation changes the planning objective.</strong> Distances to the starred anchor in each latent space of a three-level AntMaze model (one training seed). Blue is near; red is far. Higher levels show more graded costs along corridors and a broader low-cost region around the anchor.</figcaption>
         </figure>
-        <p><strong>Shorter, more manageable planning problems.</strong> Temporal decomposition reduces the number of sequential predictions and the action-search horizon. It also provides more consistent local objectives: across all four simulated environments, costs for tracking level-2 subgoals decrease more consistently than costs for matching the final goal directly.</p>
-        <figure>
-          <a class="figure-link" href="assets/figures/subgoal-tracking.png" target="_blank" rel="noopener" aria-label="Open the subgoal tracking plots at full size"><img src="assets/figures/subgoal-tracking.png" width="3279" height="1323" alt="Full-horizon goal costs can fluctuate along expert trajectories, while local costs decrease toward successive subgoals." loading="lazy"></a>
-          <figcaption><strong>Fig. 5: Temporal decomposition of planning costs.</strong> Top: latent distance to the final goal along a held-out expert trajectory. Bottom: a level-1 rollout is re-anchored at the start of each segment, projected into level-2 space, and compared with the next subgoal.</figcaption>
-        </figure>
         <h3 id="droid">Real-world videos: DROID</h3>
         <p>DROID introduces variation in scenes, lighting, and objects across episodes. Here, a purely predictive objective can encode the stable background while discarding the moving robot. We add an <strong>inverse-dynamics loss</strong> that predicts the action connecting consecutive latent states, encouraging the representation to retain information about the agent.</p>
         <figure class="figure-narrow">
           <a class="figure-link" href="assets/figures/scene-diversity.png" target="_blank" rel="noopener" aria-label="Open the scene comparison at full size"><img src="assets/figures/scene-diversity.png" width="784" height="520" alt="Example initial frames show a largely fixed scene in Cube and varied objects, viewpoints, and backgrounds in DROID." loading="lazy"></a>
-          <figcaption><strong>Fig. 6: From a fixed scene to diverse real environments.</strong> First frames from three Cube and three DROID clips illustrate variation across episodes.</figcaption>
+          <figcaption><strong>Fig. 5: From a fixed scene to diverse real environments.</strong> First frames from three Cube and three DROID clips illustrate variation across episodes.</figcaption>
         </figure>
         <p>We evaluate plans offline using <strong>Fréchet fidelity</strong>, which compares the full three-dimensional end-effector path with an expert trajectory. A stationary arm scores 0%; the expert path scores 100%. This measures path fidelity, rather than closed-loop task success.</p>
         <div class="figure-pair">
           <figure>
             <a class="figure-link" href="assets/figures/droid-ablation.png" target="_blank" rel="noopener" aria-label="Open the DROID ablation plot at full size"><img src="assets/figures/droid-ablation.png" width="1812" height="780" alt="DROID ablation comparing LeWM, LeWM with inverse dynamics, HWM, and H-JEPA at 5 frames per second." loading="lazy"></a>
-            <figcaption><strong>Fig. 7: Inverse dynamics and hierarchy.</strong> Adding inverse dynamics avoids slow-feature collapse. A learned second level improves fidelity beyond the flat baseline and the shared-space hierarchy.</figcaption>
+            <figcaption><strong>Fig. 6: Inverse dynamics and hierarchy.</strong> Adding inverse dynamics avoids slow-feature collapse. A learned second level improves fidelity beyond the flat baseline and the shared-space hierarchy.</figcaption>
           </figure>
           <figure>
             <a class="figure-link" href="assets/figures/droid-compute.png" target="_blank" rel="noopener" aria-label="Open the DROID compute plot at full size"><img src="assets/figures/droid-compute.png" width="860" height="425" alt="DROID planning fidelity versus planner compute, with H-JEPA improving the tradeoff over the flat model." loading="lazy"></a>
-            <figcaption><strong>Fig. 8: More faithful plans at lower compute.</strong> H-JEPA improves the fidelity–compute frontier. Frozen-encoder baselines are reference points evaluated at their native 1 fps; our models use 5 fps.</figcaption>
+            <figcaption><strong>Fig. 7: More faithful plans at lower compute.</strong> H-JEPA improves the fidelity–compute frontier. Frozen-encoder baselines are reference points evaluated at their native 1 fps; our models use 5 fps.</figcaption>
           </figure>
         </div>
         <p>The learned second level improves performance on top of the inverse-dynamics baseline while reducing planner compute. The paper includes the full evaluation protocol, metric calibration, ablations, and additional qualitative results.</p>

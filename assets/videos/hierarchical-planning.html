@@ -48,8 +48,7 @@ svg .level { font-size:13px; font-weight:600; fill:#637986; letter-spacing:.07em
 .active .halo { animation:breathe 2s ease-in-out infinite; }
 @keyframes breathe { 50% { stroke-width:3; } }
 .execution { transition:opacity .5s; }
-.description { margin:0 24px; border-top:1px solid #e5ebef; padding:20px 0; min-height:116px; display:grid; grid-template-columns:230px 1fr; gap:24px; align-items:start; }
-.description h2 { font:600 22px/1.25 Georgia,serif; margin:1px 0 0; }
+.description { margin:0 24px; border-top:1px solid #e5ebef; padding:16px 0; min-height:80px; }
 .description p { color:#586c7a; margin:0; font-size:14px; max-width:690px; }
 .controls { display:flex; align-items:center; gap:12px; padding:15px 24px; background:#fafbfc; border-top:1px solid #e5ebef; }
 .control { padding:7px 14px; border:1px solid #cad6de; border-radius:5px; background:white; color:var(--ink); font-size:12px; min-width:68px; }
@@ -63,8 +62,8 @@ input[type=range] { flex:1; min-width:50px; accent-color:var(--state); cursor:po
 @media(max-width:650px) {
  main { padding:24px 12px; } h1 { font-size:27px; } .intro { font-size:13px; }
  .step { padding:12px 8px; font-size:11px; } .step span { font-size:9px; }
- .description { grid-template-columns:1fr; gap:8px; margin:0 16px; min-height:180px; }
- .description h2 { font-size:21px; } .description p { font-size:13px; }
+ .description { margin:0 16px; min-height:116px; }
+ .description p { font-size:13px; }
  .controls { padding:12px; gap:8px; } .control { padding:7px 10px; min-width:54px; }
  .time { display:none; } .diagram-scroll { padding:0 6px; }
 }
@@ -178,7 +177,6 @@ input[type=range] { flex:1; min-width:50px; accent-color:var(--state); cursor:po
 </svg>
 </div>
 <div class="description" aria-live="off">
-<h2 id="step-title">Encode current state and goal</h2>
 <p id="step-description">The current observation and goal are encoded progressively through the hierarchy, producing an initial state and a goal representation at every level.</p>
 </div>
 <div class="controls">
@@ -263,7 +261,6 @@ function render() {
    if (Number(button.dataset.step) === stage) button.setAttribute('aria-current', 'step');
    else button.removeAttribute('aria-current');
   }
-  document.querySelector('#step-title').textContent = stages[stage][0];
   document.querySelector('#step-description').textContent = stages[stage][1];
  }
  timeline.value = elapsed;

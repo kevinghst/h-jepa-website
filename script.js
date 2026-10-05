@@ -81,3 +81,26 @@ copyButton.addEventListener('click', async () => {
     copyStatus.textContent = 'Citation selected. Press Ctrl+C or ⌘C to copy.';
   }
 });
+
+const executionMotion = matchMedia('(prefers-reduced-motion: reduce)');
+document.querySelectorAll('.execution-gallery video').forEach(video => {
+  let inViewport = false;
+  let active = false;
+  const updatePlayback = () => {
+    const nextActive = inViewport && !document.hidden;
+    if (active === nextActive) return;
+    active = nextActive;
+    video.pause();
+    video.currentTime = 0;
+    if (active && !executionMotion.matches) video.play().catch(() => {});
+  };
+  const observer = new IntersectionObserver(([entry]) => {
+    inViewport = entry.isIntersecting && entry.intersectionRect.width > 0 && entry.intersectionRect.height > 0;
+    updatePlayback();
+  });
+  observer.observe(video);
+  document.addEventListener('visibilitychange', updatePlayback);
+  executionMotion.addEventListener('change', event => {
+    if (event.matches) video.pause();
+  });
+});
