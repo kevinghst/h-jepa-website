@@ -17,8 +17,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@500;600;700&amp;family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=2617a2a727">
-  <script src="script.js?v=2a324d9069" defer></script>
+  <link rel="stylesheet" href="styles.css?v=afd7312bd7">
+  <script src="script.js?v=e9e15308e2" defer></script>
 </head>
 <body id="top">
   <a class="skip-link" href="#summary">Skip to content</a>
@@ -72,20 +72,17 @@
       </section>
       <section id="predictive-learning" class="section">
         <h2>Hierarchical predictive learning</h2>
-        <p>H-JEPA learns a hierarchy of latent world models end-to-end from observation-action trajectories, with each higher level predicting over a longer timescale in its own learned latent space. Each level has its own state encoder, action encoder, and latent predictor. The first level encodes images and primitive actions. Higher levels encode states from the level below and aggregate intervening actions, so each prediction spans a longer interval. For example, a higher level stride of two doubles the timescale at each successive level.</p>
-        <p>At every level, the model predicts the next latent state conditioned on the preceding state and action latents. A SIGReg regularizer <a href="#ref-lejepa" aria-label="Reference 1: LeJEPA">[1]</a> prevents representation collapse by encouraging an isotropic Gaussian embedding distribution. The whole hierarchy is trained jointly, with gradients from higher-level objectives flowing through lower-level encoders.</p>
-        <figure>
-          <a class="figure-link" href="assets/figures/training.png" target="_blank" rel="noopener" aria-label="Open the training diagram at full size"><img src="assets/figures/training.png" width="1990" height="793" alt="H-JEPA training: level 2 encodes every other level-1 state and pools the two intervening actions. Each level learns action-conditioned prediction with SIGReg regularization." loading="lazy"></a>
-          <figcaption><strong>Fig. 2: Learning across temporal scales.</strong> Left: building a two-level hierarchy with stride two and a state window of one on the second level. Right: each level predicts in its own latent space and regularizes its encoded states. All levels are trained end-to-end.</figcaption>
-        </figure>
+        <p>H-JEPA learns a hierarchy of latent world models end-to-end from observation-action trajectories, with each higher level predicting over a longer timescale in its own learned latent space. At every level, action-conditioned prediction is paired with SIGReg <a href="#ref-lejepa" aria-label="Reference 1: LeJEPA">[1]</a> to prevent representation collapse. The hierarchy is trained jointly, with gradients from higher-level objectives flowing through lower-level encoders.</p>
+        <figure id="training-animation-interleaved" class="training-animation">
+          <iframe src="assets/videos/hierarchical-training-interleaved.html?embed=1&amp;v=4c878a4333" title="Interactive training animation with interleaved observations and actions" loading="lazy"></iframe>
+          </figure>
       </section>
       <section id="hierarchical-planning" class="section">
         <h2>Hierarchical planning</h2>
         <p>H-JEPA plans from coarse to fine: higher levels propose latent subgoals, and lower levels refine them into primitive actions. Each lower-level planner compares its predictions with the assigned subgoal in the higher level’s latent space. After executing an action prefix, planning repeats from the new observation.</p>
         <figure id="planning-animation" class="planning-animation">
-          <iframe src="assets/videos/hierarchical-planning.html?embed=1&amp;v=8bcabdd70d" title="Interactive hierarchical planning animation" loading="lazy"></iframe>
-          <figcaption><strong>Fig. 3: From goals to subgoals to actions.</strong> In this two-level example, the coarse planner optimizes toward the final goal. The fine planner lifts its predicted state into level-2 space to match the first coarse subgoal. <a href="assets/videos/hierarchical-planning.html" target="_blank" rel="noopener">Open the larger animation</a>.</figcaption>
-        </figure>
+          <iframe src="assets/videos/hierarchical-planning.html?embed=1&amp;v=ea3f809498" title="Interactive hierarchical planning animation" loading="lazy"></iframe>
+          </figure>
       </section>
       <section id="results" class="section">
         <h2>Experimental results</h2>
@@ -102,42 +99,42 @@
               <a href="assets/videos/selective_abstraction_lvl4.mp4">Download the selective abstraction video.</a>
             </video>
           </div>
-          <figcaption id="abstractions-caption"><strong>Fig. 4: Selective abstraction across hierarchy levels.</strong> Above: frozen probes measure retained state information; higher normalized error means less recoverable information. Error bars show standard error over three training seeds. Below: ground-truth observations and decoded representations at levels 1–4 in AntMaze and FourRoom. Decoders are trained after the world model, only for visualization.</figcaption>
+          <figcaption id="abstractions-caption"><strong>Fig. 2: Selective abstraction across hierarchy levels.</strong> Above: frozen probes measure retained state information; higher normalized error means less recoverable information. Error bars show standard error over three training seeds. Below: ground-truth observations and decoded representations at levels 1–4 in AntMaze and FourRoom. Decoders are trained after the world model, only for visualization.</figcaption>
         </figure>
         <p>This selectivity is strongest when entities evolve at well-separated timescales. It is not universal: the manipulation datasets have smaller temporal-frequency gaps and show little selective abstraction.</p>
         <h3 id="planning-results">Planning performance</h3>
         <p>On FourRoom, AntMaze, and Cube, adding hierarchy levels up to three improves the success–compute frontier: the planner can achieve higher success with less compute. Two-level H-JEPA also matches or exceeds LeWM across tested budgets on Push-T. Deeper models perform poorly there, likely because short episodes leave much less usable training data for longer training clips.</p>
         <figure>
           <a class="figure-link" href="assets/figures/planning-results.png" target="_blank" rel="noopener" aria-label="Open the planning results at full size"><img src="assets/figures/planning-results.png" width="2600" height="1388" alt="Planning success versus compute and hierarchy depth across FourRoom, AntMaze, Cube, and Push-T, comparing LeWM, H-JEPA, and HWM." loading="lazy"></a>
-          <figcaption><strong>Fig. 5: Planning across compute budgets and hierarchy depths.</strong> Top: success versus planner FLOPs, including forward and backward passes; bold curves indicate Pareto fronts. Bottom: depth comparisons on a separate set of 50 tasks per environment, with LeWM and H-JEPA settings selected under a 100-TFLOP budget. Error bars show one standard error over three seeds.</figcaption>
+          <figcaption><strong>Fig. 3: Planning across compute budgets and hierarchy depths.</strong> Top: success versus planner FLOPs, including forward and backward passes; bold curves indicate Pareto fronts. Bottom: depth comparisons on a separate set of 50 tasks per environment, with LeWM and H-JEPA settings selected under a 100-TFLOP budget. Error bars show one standard error over three seeds.</figcaption>
         </figure>
         <p>To isolate the value of distinct representations, we compare against HWM with matched data and training settings, replacing upper-level encoders with identity maps. HWM benefits from temporal hierarchy in a shared latent space. H-JEPA improves further on AntMaze and Cube; on AntMaze, three-level H-JEPA achieves nearly twice HWM’s success.</p>
         <h3 id="why-hierarchy">Why hierarchy helps</h3>
         <p><strong>A better space for measuring progress.</strong> A fine-grained representation may assign a large distance to states that differ in pose but are equally close to the goal. Projecting a level-1 rollout into a more abstract latent space improves planning even without invoking upper-level planners. Across every tested multilevel AntMaze model, at least one upper-level cost improves success over the native level-1 cost.</p>
         <figure class="figure-narrow">
           <a class="figure-link" href="assets/figures/goal-costs.png" target="_blank" rel="noopener" aria-label="Open the goal-cost visualization at full size"><img src="assets/figures/goal-costs.png" width="975" height="479" alt="Goal-cost surfaces in different latent spaces illustrate how upper-level representations change the planning objective." loading="lazy"></a>
-          <figcaption><strong>Fig. 6: The representation changes the planning objective.</strong> Distances to the starred anchor in each latent space of a three-level AntMaze model (one training seed). Blue is near; red is far. Higher levels show more graded costs along corridors and a broader low-cost region around the anchor.</figcaption>
+          <figcaption><strong>Fig. 4: The representation changes the planning objective.</strong> Distances to the starred anchor in each latent space of a three-level AntMaze model (one training seed). Blue is near; red is far. Higher levels show more graded costs along corridors and a broader low-cost region around the anchor.</figcaption>
         </figure>
         <p><strong>Shorter, more manageable planning problems.</strong> Temporal decomposition reduces the number of sequential predictions and the action-search horizon. It also provides more consistent local objectives: across all four simulated environments, costs for tracking level-2 subgoals decrease more consistently than costs for matching the final goal directly.</p>
         <figure>
           <a class="figure-link" href="assets/figures/subgoal-tracking.png" target="_blank" rel="noopener" aria-label="Open the subgoal tracking plots at full size"><img src="assets/figures/subgoal-tracking.png" width="3279" height="1323" alt="Full-horizon goal costs can fluctuate along expert trajectories, while local costs decrease toward successive subgoals." loading="lazy"></a>
-          <figcaption><strong>Fig. 7: Temporal decomposition of planning costs.</strong> Top: latent distance to the final goal along a held-out expert trajectory. Bottom: a level-1 rollout is re-anchored at the start of each segment, projected into level-2 space, and compared with the next subgoal.</figcaption>
+          <figcaption><strong>Fig. 5: Temporal decomposition of planning costs.</strong> Top: latent distance to the final goal along a held-out expert trajectory. Bottom: a level-1 rollout is re-anchored at the start of each segment, projected into level-2 space, and compared with the next subgoal.</figcaption>
         </figure>
         <h3 id="droid">Real-world videos: DROID</h3>
         <p>DROID introduces variation in scenes, lighting, and objects across episodes. Here, a purely predictive objective can encode the stable background while discarding the moving robot. We add an <strong>inverse-dynamics loss</strong> that predicts the action connecting consecutive latent states, encouraging the representation to retain information about the agent.</p>
         <figure class="figure-narrow">
           <a class="figure-link" href="assets/figures/scene-diversity.png" target="_blank" rel="noopener" aria-label="Open the scene comparison at full size"><img src="assets/figures/scene-diversity.png" width="784" height="520" alt="Example initial frames show a largely fixed scene in Cube and varied objects, viewpoints, and backgrounds in DROID." loading="lazy"></a>
-          <figcaption><strong>Fig. 8: From a fixed scene to diverse real environments.</strong> First frames from three Cube and three DROID clips illustrate variation across episodes.</figcaption>
+          <figcaption><strong>Fig. 6: From a fixed scene to diverse real environments.</strong> First frames from three Cube and three DROID clips illustrate variation across episodes.</figcaption>
         </figure>
         <p>We evaluate plans offline using <strong>Fréchet fidelity</strong>, which compares the full three-dimensional end-effector path with an expert trajectory. A stationary arm scores 0%; the expert path scores 100%. This measures path fidelity, rather than closed-loop task success.</p>
         <div class="figure-pair">
           <figure>
             <a class="figure-link" href="assets/figures/droid-ablation.png" target="_blank" rel="noopener" aria-label="Open the DROID ablation plot at full size"><img src="assets/figures/droid-ablation.png" width="1812" height="780" alt="DROID ablation comparing LeWM, LeWM with inverse dynamics, HWM, and H-JEPA at 5 frames per second." loading="lazy"></a>
-            <figcaption><strong>Fig. 9: Inverse dynamics and hierarchy.</strong> Adding inverse dynamics avoids slow-feature collapse. A learned second level improves fidelity beyond the flat baseline and the shared-space hierarchy.</figcaption>
+            <figcaption><strong>Fig. 7: Inverse dynamics and hierarchy.</strong> Adding inverse dynamics avoids slow-feature collapse. A learned second level improves fidelity beyond the flat baseline and the shared-space hierarchy.</figcaption>
           </figure>
           <figure>
             <a class="figure-link" href="assets/figures/droid-compute.png" target="_blank" rel="noopener" aria-label="Open the DROID compute plot at full size"><img src="assets/figures/droid-compute.png" width="860" height="425" alt="DROID planning fidelity versus planner compute, with H-JEPA improving the tradeoff over the flat model." loading="lazy"></a>
-            <figcaption><strong>Fig. 10: More faithful plans at lower compute.</strong> H-JEPA improves the fidelity–compute frontier. Frozen-encoder baselines are reference points evaluated at their native 1 fps; our models use 5 fps.</figcaption>
+            <figcaption><strong>Fig. 8: More faithful plans at lower compute.</strong> H-JEPA improves the fidelity–compute frontier. Frozen-encoder baselines are reference points evaluated at their native 1 fps; our models use 5 fps.</figcaption>
           </figure>
         </div>
         <p>The learned second level improves performance on top of the inverse-dynamics baseline while reducing planner compute. The paper includes the full evaluation protocol, metric calibration, ablations, and additional qualitative results.</p>

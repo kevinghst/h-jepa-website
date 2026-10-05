@@ -245,7 +245,8 @@ const toggle = document.querySelector('#toggle');
 const steps = [...document.querySelectorAll('[data-step]')];
 const groups = [...document.querySelectorAll('[data-phase]')];
 const motion = matchMedia('(prefers-reduced-motion: reduce)');
-let playing = !motion.matches, elapsed = 0, previousTime = null, currentStage = -1;
+let frameVisible = window.parent === window;
+let playing = frameVisible && !motion.matches, elapsed = 0, previousTime = null, currentStage = -1;
 function render() {
  const nextStage = stageStarts.findIndex(start => start > elapsed);
  const stage = nextStage === -1 ? stages.length - 1 : nextStage - 1;
@@ -276,6 +277,15 @@ function setPlaying(value) {
  toggle.textContent = playing ? 'Pause' : 'Play';
  toggle.setAttribute('aria-label', playing ? 'Pause animation' : 'Play animation');
 }
+window.addEventListener('message', event => {
+ if (window.parent === window || event.source !== window.parent || event.origin !== location.origin) return;
+ if (event.data?.type !== 'hjepa-animation-visibility' || typeof event.data.visible !== 'boolean') return;
+ if (frameVisible === event.data.visible) return;
+ frameVisible = event.data.visible;
+ elapsed = 0;
+ setPlaying(frameVisible && !motion.matches);
+ render();
+});
 toggle.addEventListener('click', () => setPlaying(!playing));
 document.querySelector('#replay').addEventListener('click', () => { elapsed = 0; setPlaying(true); render(); });
 for (const button of steps) button.addEventListener('click', () => { elapsed = stageStarts[Number(button.dataset.step)]; setPlaying(false); render(); });
@@ -283,7 +293,7 @@ timeline.addEventListener('input', () => { elapsed = Number(timeline.value); set
 motion.addEventListener('change', event => { if (event.matches) setPlaying(false); });
 document.addEventListener('visibilitychange', () => { previousTime = null; });
 function tick(now) {
- if (playing && !document.hidden) {
+ if (playing && frameVisible && !document.hidden) {
   if (previousTime !== null) elapsed = (elapsed + Math.min((now - previousTime) / 1000, .1)) % duration;
   previousTime = now;
   render();

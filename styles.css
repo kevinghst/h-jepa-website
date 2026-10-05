@@ -57,7 +57,7 @@ figure img, figure video { display: block; width: 100%; height: auto; }
 figcaption { margin-top: 12px; color: var(--muted); font-size: 12px; line-height: 1.65; }
 figcaption strong { font-weight: 600; color: #383838; }
 .figure-narrow { max-width: 570px; margin-right: auto; margin-left: auto; }
-.planning-animation iframe { display: block; width: 100%; height: 680px; border: 0; }
+.planning-animation iframe, .training-animation iframe { display: block; width: 100%; height: 680px; border: 0; }
 .abstraction-figure { max-width: 650px; margin-right: auto; margin-left: auto; }
 .abstraction-media { display: grid; grid-template-columns: 1fr; justify-items: center; gap: 16px; }
 .abstraction-media > * { min-width: 0; }

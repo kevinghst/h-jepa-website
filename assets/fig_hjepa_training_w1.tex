@@ -1,0 +1,160 @@
+% H-JEPA training with pointwise upper-level encoding; a complete figure.
+% Requires amsmath, xcolor, graphicx, tikz, backgrounds, fit and shapes.gates.logic.US.
+% Larger labels and gates use a slightly taller panel for vertical spacing.
+\begin{figure}[t]
+\centering
+\resizebox{\textwidth}{!}{%
+\begin{tikzpicture}[
+    x=1cm, y=1cm,
+    font=\fontsize{15.20}{18.24}\selectfont,
+    >={Stealth[length=4.5pt,width=3.5pt]},
+    panel/.style={draw=hjepaborder, line width=0.6pt, rounded corners=5pt},
+    objective/.style={draw=hjepacost!65, fill=hjepacostbg,
+        text=hjepacost, rounded corners=3pt, line width=0.6pt,
+        inner xsep=6pt, inner ysep=4pt},
+    costflow/.style={flow,draw=hjepacost},
+    flow/.style={->, draw=black!65, line width=0.65pt},
+    encoder/.style={and gate US,logic gate inputs=nn,
+        rotate=90,transform shape,xscale=0.90,yscale=1.17,
+        draw=black!65,fill=black!3,line width=0.65pt,
+        minimum width=1.08cm,minimum height=0.72cm,
+        inner xsep=5pt,inner ysep=2pt},
+    predictor/.style={and gate US,logic gate inputs=nn,
+        draw=black!65,fill=black!3,line width=0.65pt,
+        minimum width=1.13cm,minimum height=0.78cm,
+        inner xsep=1pt,inner ysep=0pt},
+    state/.style={text=hjepastate, inner sep=3pt},
+    action/.style={text=hjepaaction, inner sep=3pt},
+    heading/.style={text=hjepaheading,font=\sffamily\bfseries\fontsize{15.20}{18.24}\selectfont, anchor=west},
+    note/.style={font=\sffamily\fontsize{13.85}{16.62}\selectfont, text=black!65, inner sep=2pt},
+    subheading/.style={text=hjepaheading,font=\sffamily\fontsize{13.85}{16.62}\selectfont, text=black!80},
+    level/.style={font=\sffamily\fontsize{12.50}{15.00}\selectfont, text=black!60, anchor=east},
+]
+\definecolor{hjepastate}{HTML}{286494}
+\definecolor{hjepaaction}{HTML}{B76622}
+\definecolor{hjepaborder}{HTML}{B5C6D2}
+\definecolor{hjepaheader}{HTML}{EAF2F6}
+\definecolor{hjepaheading}{HTML}{29495D}
+\definecolor{hjepacost}{HTML}{77529C}
+\definecolor{hjepacostbg}{HTML}{F5F1FA}
+
+
+% Base arrow gap; level-2 inputs receive an additional 0.25cm below.
+\def\encoderGap{0.38cm}
+% Panel frames distinguish hierarchy construction from the shared objective.
+\path[use as bounding box] (-0.65,0.35) rectangle (21.55,9.10);
+\begin{scope}[on background layer]
+    \begin{scope}
+        \clip[rounded corners=5pt] (-0.65,0.35) rectangle (11.25,9.10);
+        \fill[hjepaheader] (-0.65,8.20) rectangle (11.25,9.10);
+    \end{scope}
+    \begin{scope}
+        \clip[rounded corners=5pt] (11.70,0.35) rectangle (21.55,9.10);
+        \fill[hjepaheader] (11.70,8.20) rectangle (21.55,9.10);
+    \end{scope}
+    \draw[panel] (-0.65,0.35) rectangle (11.25,9.10);
+    \draw[panel] (11.70,0.35) rectangle (21.55,9.10);
+    \draw[hjepaborder,line width=0.5pt] (-0.65,8.20) -- (11.25,8.20);
+    \draw[hjepaborder,line width=0.5pt] (11.70,8.20) -- (21.55,8.20);
+\end{scope}
+\node[heading] (hierarchyheading) at (-0.25,8.65)
+    {(a) Build hierarchy ($w_2=1$, $s_2=2$)};
+\node[subheading] (stateheading) at (3.75,7.27) {State encoding};
+\node[subheading] at (9.05,7.27) {Action encoding};
+\node[heading] at (12.10,8.65) {(b) Train each level};
+\node[note,anchor=west] at (12.10,7.47) {For each level $\ell=1,2$};
+
+% Keep the right-panel prediction block at its existing height.
+\node[predictor,anchor=north,yshift=-0.50cm] (predictor) at (15.20,0 |- stateheading.north)
+    {$F^{(\ell)}$};
+
+% State stream: four observations, with pointwise level-2 encoding at stride 2.
+% Positioning from node boundaries gives the input and output arrows the
+% same visible length despite different heights of o, E, and z labels.
+\foreach \x/\t/\columnopacity in {1.55/0/1,2.95/1/0.45,4.55/2/1,6.15/3/0.45} {
+    \begin{scope}[opacity=\columnopacity]
+    \node[state] (o\t) at (\x,0.90) {$o_{\t}$};
+    \node[encoder,anchor=west] (e\t) at ([yshift=\encoderGap]o\t.north) {};
+    \node at (e\t.center) {$E^{(1)}$};
+    \node[state,anchor=south] (z\t) at ([yshift=\encoderGap]e\t.output) {$z^{(1)}_{\t}$};
+    \draw[flow] (o\t.north) -- (e\t.west);
+    \draw[flow] (e\t.output) -- (z\t.south);
+    \end{scope}
+}
+\node[level] at (1.05,0 |- z0) {Level 1};
+\node[encoder,anchor=west] (upper0) at ([yshift=\encoderGap+0.25cm]z0.north) {};
+\node at (upper0.center) {$E^{(2)}$};
+\node[state,anchor=south] (u0) at ([yshift=\encoderGap]upper0.output) {$z^{(2)}_0$};
+\node[encoder,anchor=west] (upper1) at ([yshift=\encoderGap+0.25cm]z2.north) {};
+\node at (upper1.center) {$E^{(2)}$};
+\node[state,anchor=south] (u1) at ([yshift=\encoderGap]upper1.output) {$z^{(2)}_1$};
+\node[level] at (1.05,0 |- u0) {Level 2};
+\draw[flow] (z0.north) -- (upper0.west);
+\draw[flow] (z2.north) -- (upper1.west);
+\draw[flow] (upper0.output) -- (u0.south);
+\draw[flow] (upper1.output) -- (u1.south);
+
+% Action stream mirrors the state stream, beginning with primitive actions.
+% With pointwise states at times 0 and 2, actions a_0 and a_1 span the transition.
+\foreach \x/\t in {8.05/0,10.05/1} {
+    \node[action] (rawa\t) at (\x,0.90) {$a_{\t}$};
+    \node[encoder,anchor=west] (ae\t) at ([yshift=\encoderGap]rawa\t.north) {};
+    \node at (ae\t.center) {$A^{(1)}$};
+    \node[action,anchor=south] (az\t) at ([yshift=\encoderGap]ae\t.output) {$a^{(1)}_{\t}$};
+    \draw[flow] (rawa\t.north) -- (ae\t.west);
+    \draw[flow] (ae\t.output) -- (az\t.south);
+}
+\node[encoder] (actionupper) at (9.05,0 |- upper0.center) {};
+\node at (actionupper.center) {$A^{(2)}$};
+\node[action,anchor=south] (au) at ([yshift=\encoderGap]actionupper.output) {$a^{(2)}_0$};
+\draw[flow] (az0.north) -- (actionupper.input 1);
+\draw[flow] (az1.north) -- (actionupper.input 2);
+\draw[flow] (actionupper.output) -- (au.south);
+
+% Shared teacher-forced prediction objective.
+% Lower the prediction block slightly from the encoding-heading line;
+% action and target share a baseline below the predictor and loss.
+\node[state] (context) at (12.95,0 |- predictor.center) {$z^{(\ell)}_t$};
+\node[state] (prediction) at (17.65,0 |- predictor.center) {$\hat z^{(\ell)}_{t+1}$};
+\node[objective] (loss) at (20.20,0 |- predictor.center) {$\mathcal{L}^{(\ell)}_{\mathrm{pred}}$};
+\node[state,below=0.35cm of loss] (target) {$z^{(\ell)}_{t+1}$};
+\node[action,anchor=base] (conditioning) at (predictor.center |- target.base)
+    {$a^{(\ell)}_t$};
+\draw[flow] (context.east) -- (predictor.west);
+\draw[flow] (conditioning.north) -- (predictor.south);
+\draw[flow] (predictor.output) -- (prediction.west);
+\draw[costflow] (prediction) -- (loss);
+\draw[costflow] (target) -- (loss);
+\node[note,align=center] at ([yshift=-0.90cm]context.center) {Context};
+\node[note] at ([yshift=-0.90cm]prediction.center) {Prediction};
+\node[note,align=center,below=0.12cm of target] (targetnote) {Target};
+\node[note,anchor=west,text=hjepacost] (objectiveheading) at (12.10,2.30) {Per-level objective};
+% Keep the objective above the compact panel's bottom border.
+\node[objective,anchor=south,text=black] at (16.65,0.75)
+    {$\displaystyle \textcolor{hjepacost}{\mathcal{L}^{(\ell)}}
+      = \textcolor{hjepacost}{\mathcal{L}^{(\ell)}_{\mathrm{pred}}}
+      + \lambda_\ell\,\mathrm{SIGReg}\!\left(
+          \textcolor{hjepastate}{Z^{(\ell)}}\right)$};
+
+% Place regularization between the prediction block and the objective.
+\coordinate (regularizationcenter) at (17.10,3.75);
+\node[note,anchor=west,align=left,inner ysep=0pt]
+    at (12.10,0 |- regularizationcenter)
+    {Regularize encoded states\\[0.28cm]
+     {\fontsize{15.20}{18.24}\selectfont\rmfamily\color{black}$\mathrm{SIGReg}\!\left(
+        \textcolor{hjepastate}{Z^{(\ell)}}\right),
+      \qquad \textcolor{hjepastate}{Z^{(\ell)}}
+      = \{\textcolor{hjepastate}{z^{(\ell)}_t}\}_{\text{batch, time}}$}};
+\end{tikzpicture}%
+}% end resizebox
+\caption{\textbf{H-JEPA training across temporal scales.}
+(a) With $w_2{=}1$ and $s_2{=}2$, level~2 encodes every other level-1 state
+pointwise and aggregates the intervening action embeddings.
+Faded columns are retained at level~1 but skipped at level~2.
+(b) Each level predicts the next latent state conditioned on preceding latent
+states and actions,
+with SIGReg regularizing the states against collapse.
+All levels are trained end-to-end,
+with gradients from upper-level objectives propagating through lower-level encoders.}
+\label{fig:hjepa_training}
+\end{figure}

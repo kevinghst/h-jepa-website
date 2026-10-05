@@ -1,19 +1,34 @@
 const progress = document.querySelector('.reading-progress');
-const planningFrame = document.querySelector('#planning-animation iframe');
-if (planningFrame) {
+document.querySelectorAll('.planning-animation iframe, .training-animation iframe').forEach(animationFrame => {
   let frameObserver;
-  const fitPlanningFrame = () => {
-    const content = planningFrame.contentDocument?.querySelector('main');
+  let visibleInViewport = false;
+  const notifyVisibility = () => {
+    animationFrame.contentWindow?.postMessage({
+      type: 'hjepa-animation-visibility',
+      visible: visibleInViewport && !document.hidden,
+    }, location.origin);
+  };
+  const visibilityObserver = new IntersectionObserver(([entry]) => {
+    visibleInViewport = entry.isIntersecting && entry.intersectionRect.width > 0 && entry.intersectionRect.height > 0;
+    notifyVisibility();
+  });
+  visibilityObserver.observe(animationFrame);
+  document.addEventListener('visibilitychange', notifyVisibility);
+  const fitAnimationFrame = () => {
+    const content = animationFrame.contentDocument?.querySelector('main');
     if (!content) return;
     frameObserver?.disconnect();
-    const fit = () => { planningFrame.style.height = `${Math.ceil(content.getBoundingClientRect().height)}px`; };
+    const fit = () => { animationFrame.style.height = `${Math.ceil(content.getBoundingClientRect().height)}px`; };
     frameObserver = new ResizeObserver(fit);
     frameObserver.observe(content);
     fit();
   };
-  planningFrame.addEventListener('load', fitPlanningFrame);
-  fitPlanningFrame();
-}
+  animationFrame.addEventListener('load', () => {
+    fitAnimationFrame();
+    notifyVisibility();
+  });
+  fitAnimationFrame();
+});
 const tocLinks = [...document.querySelectorAll('.side-toc a')];
 const sections = tocLinks.map(link => document.querySelector(link.hash));
 let scheduled = false;
