@@ -1,4 +1,19 @@
 const progress = document.querySelector('.reading-progress');
+const planningFrame = document.querySelector('#planning-animation iframe');
+if (planningFrame) {
+  let frameObserver;
+  const fitPlanningFrame = () => {
+    const content = planningFrame.contentDocument?.querySelector('main');
+    if (!content) return;
+    frameObserver?.disconnect();
+    const fit = () => { planningFrame.style.height = `${Math.ceil(content.getBoundingClientRect().height)}px`; };
+    frameObserver = new ResizeObserver(fit);
+    frameObserver.observe(content);
+    fit();
+  };
+  planningFrame.addEventListener('load', fitPlanningFrame);
+  fitPlanningFrame();
+}
 const tocLinks = [...document.querySelectorAll('.side-toc a')];
 const sections = tocLinks.map(link => document.querySelector(link.hash));
 let scheduled = false;

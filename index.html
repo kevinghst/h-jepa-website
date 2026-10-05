@@ -17,31 +17,36 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@500;600;700&amp;family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css">
-  <script src="script.js" defer></script>
+  <link rel="stylesheet" href="styles.css?v=2617a2a727">
+  <script src="script.js?v=2a324d9069" defer></script>
 </head>
 <body id="top">
   <a class="skip-link" href="#summary">Skip to content</a>
   <div class="reading-progress" aria-hidden="true"></div>
-  <a class="site-mark" href="#top" aria-label="H-JEPA, back to top">H-JEPA</a>
   <nav class="side-toc" aria-label="Page contents">
     <div class="toc-title">Contents</div>
     <ol>
       <li><a href="#summary">Summary</a></li>
-      <li><a href="#method">Method</a>
-        <ul><li><a href="#predictive-learning">Hierarchical predictive learning</a></li><li><a href="#hierarchical-planning">Top-down planning</a></li></ul>
-      </li>
+      <li><a href="#predictive-learning">Hierarchical predictive learning</a></li>
+      <li><a href="#hierarchical-planning">Hierarchical planning</a></li>
       <li><a href="#results">Experimental results</a>
         <ul><li><a href="#abstractions">Learning abstractions</a></li><li><a href="#planning-results">Planning performance</a></li><li><a href="#why-hierarchy">Why hierarchy helps</a></li><li><a href="#droid">Real-world videos: DROID</a></li></ul>
       </li>
       <li><a href="#takeaway">Takeaway</a></li>
+      <li><a href="#references">References</a></li>
       <li><a href="#bibtex">BibTeX</a></li>
     </ol>
   </nav>
   <div class="wrap">
     <header class="hero">
       <h1>H-JEPA: End-to-End Learning of<br class="desktop-break"> Hierarchical World Models<br class="desktop-break"> for Visual Planning</h1>
-      <div class="authors"><span>Wancong Zhang<sup>1,2,*</sup></span><span>Basile Terver<sup>2,3,*</sup></span><span>Michael Rabbat<sup>2</sup></span><span>Yann LeCun<sup>1,2,†</sup></span><span>Randall Balestriero<sup>2,4,†</sup></span></div>
+      <div class="authors">
+        <span><a href="https://kevinghst.github.io/">Wancong Zhang</a><sup>1,2,*</sup></span>
+        <span><a href="https://scholar.google.com/citations?user=6gdRsmkAAAAJ&amp;hl=fr">Basile Terver</a><sup>2,3,*</sup></span>
+        <span><a href="https://scholar.google.com/citations?user=cMPKe9UAAAAJ&amp;hl=en">Michael Rabbat</a><sup>2</sup></span>
+        <span><a href="http://yann.lecun.com/">Yann LeCun</a><sup>1,2,†</sup></span>
+        <span><a href="https://randallbalestriero.github.io/">Randall Balestriero</a><sup>2,4,†</sup></span>
+      </div>
       <p class="contribution"><sup>*</sup>Equal contribution; order determined by coin toss. <span><sup>†</sup>Equal advising.</span></p>
       <div class="affiliations"><span><sup>1</sup>NYU</span><span><sup>2</sup>Advanced Machine Intelligence</span><span><sup>3</sup>INRIA Paris</span><span><sup>4</sup>Brown University</span></div>
       <div class="resource-links">
@@ -52,35 +57,34 @@
     </header>
     <details class="mobile-toc">
       <summary>On this page</summary>
-      <nav aria-label="Compact page contents"><a href="#summary">Summary</a><a href="#method">Method</a><a href="#results">Experimental results</a><a href="#takeaway">Takeaway</a><a href="#bibtex">BibTeX</a></nav>
+      <nav aria-label="Compact page contents"><a href="#summary">Summary</a><a href="#predictive-learning">Hierarchical predictive learning</a><a href="#hierarchical-planning">Hierarchical planning</a><a href="#results">Experimental results</a><a href="#takeaway">Takeaway</a><a href="#references">References</a><a href="#bibtex">BibTeX</a></nav>
     </details>
     <main>
       <section id="summary" class="section">
         <h2>Summary</h2>
-        <p>Long-horizon planning requires reasoning at different timescales and levels of abstraction. A robot navigating a maze needs to decide where to go, while also controlling how to move. A world model that predicts every fine-grained step in a single latent space has to solve both problems at once: prediction errors accumulate, and fast-changing details can obscure progress toward the goal.</p>
-        <p>We introduce <strong>H-JEPA</strong>, an end-to-end recipe for learning a hierarchy of Joint-Embedding Predictive Architectures. Each level predicts farther ahead in <strong>its own learned latent space</strong>. Planning runs top-down: the highest level plans toward the goal, its predictions become subgoals for the level below, and the lowest level produces primitive actions.</p>
-        <p>When factors in the data evolve at separated timescales, higher levels discard fast, unpredictable detail while preserving slower, task-relevant state. Across four simulated navigation and manipulation environments, hierarchical planning improves over a flat JEPA. On Visual AntMaze, a three-level hierarchy raises success from <strong class="highlight">18% to 73%</strong>. With inverse-dynamics supervision, the approach also improves offline planning fidelity on diverse real-robot videos from DROID at lower planner compute.</p>
+        <p>Long-horizon planning requires reasoning at different timescales and levels of abstraction. Existing action-conditioned JEPA world models predict and plan at a single timescale or with multiple horizons in one shared latent space. This makes prediction and planning unnecessarily hard - a single representation must serve both low-level control and long-range planning, yet details useful for precise control can be difficult to predict over long horizon and irrelevant to measuring progress toward the goal.</p>
+        <p><strong>H-JEPA</strong> is an end-to-end recipe for learning a hierarchy of Joint-Embedding Predictive Architectures. Each higher level predicts farther ahead in <strong>its own learned latent space</strong>. Planning runs top-down: the highest level plans toward the goal, its predictions become subgoals for the level below, and the lowest level produces primitive actions.</p>
+        <p>When factors in the data evolve at separated timescales, higher levels discard fast, unpredictable detail while preserving slower, task-relevant state. Across four simulated navigation and manipulation environments, hierarchical planning with H-JEPA improves over a flat JEPA. On Visual AntMaze, a three-level hierarchy raises success from <strong class="highlight">18% to 73%</strong>. With inverse-dynamics supervision, the approach also improves offline planning fidelity on diverse real-robot videos from DROID.</p>
         <figure>
           <a class="figure-link" href="assets/figures/overview.png" target="_blank" rel="noopener" aria-label="Open the hierarchical planning overview at full size"><img src="assets/figures/overview.png" width="2375" height="1067" alt="Three-level planning in Visual AntMaze, with coarse subgoals refined into raw actions. The accompanying plot compares planning success and compute." fetchpriority="high"></a>
           <figcaption><strong>Fig. 1: Hierarchical abstractions support planning at multiple timescales.</strong> Higher-level latents preserve the ant’s position and maze layout while losing leg-pose detail. The top level plans toward the final goal; each lower level refines an upper-level subgoal. Right: planning success versus compute for flat LeWM and two- and three-level H-JEPA. Error bars show standard error over three paired model and planning seeds.</figcaption>
         </figure>
       </section>
-      <section id="method" class="section">
-        <h2>Method</h2>
-        <p>H-JEPA learns from observation–action trajectories, without reward or pixel-reconstruction objectives. It combines a hierarchy of predictive representations with a planner that uses those representations at their corresponding timescales.</p>
-        <h3 id="predictive-learning">Hierarchical predictive learning</h3>
-        <p>Each level has its own state encoder, action encoder, and latent predictor. The first level encodes images and primitive actions. Higher levels encode states from the level below and aggregate intervening actions, so each prediction spans a longer interval. In our simulation experiments, a stride of two doubles the timescale at each successive level.</p>
-        <p>At every level, the model learns to predict the next latent state conditioned on actions. A SIGReg regularizer prevents representation collapse by encouraging an isotropic Gaussian embedding distribution. The whole hierarchy is trained jointly, with gradients from higher-level objectives flowing through lower-level encoders. All reported experiments use pointwise upper-level state encoders.</p>
+      <section id="predictive-learning" class="section">
+        <h2>Hierarchical predictive learning</h2>
+        <p>H-JEPA learns a hierarchy of latent world models end-to-end from observation-action trajectories, with each higher level predicting over a longer timescale in its own learned latent space. Each level has its own state encoder, action encoder, and latent predictor. The first level encodes images and primitive actions. Higher levels encode states from the level below and aggregate intervening actions, so each prediction spans a longer interval. For example, a higher level stride of two doubles the timescale at each successive level.</p>
+        <p>At every level, the model predicts the next latent state conditioned on the preceding state and action latents. A SIGReg regularizer <a href="#ref-lejepa" aria-label="Reference 1: LeJEPA">[1]</a> prevents representation collapse by encouraging an isotropic Gaussian embedding distribution. The whole hierarchy is trained jointly, with gradients from higher-level objectives flowing through lower-level encoders.</p>
         <figure>
           <a class="figure-link" href="assets/figures/training.png" target="_blank" rel="noopener" aria-label="Open the training diagram at full size"><img src="assets/figures/training.png" width="1990" height="793" alt="H-JEPA training: level 2 encodes every other level-1 state and pools the two intervening actions. Each level learns action-conditioned prediction with SIGReg regularization." loading="lazy"></a>
-          <figcaption><strong>Fig. 2: Learning across temporal scales.</strong> Left: building a two-level hierarchy with stride two and a state window of one. Right: each level predicts in its own latent space and regularizes its encoded states. All levels are trained end-to-end.</figcaption>
+          <figcaption><strong>Fig. 2: Learning across temporal scales.</strong> Left: building a two-level hierarchy with stride two and a state window of one on the second level. Right: each level predicts in its own latent space and regularizes its encoded states. All levels are trained end-to-end.</figcaption>
         </figure>
-        <h3 id="hierarchical-planning">Top-down planning</h3>
-        <p>We encode the current observation and goal at every level. The highest-level planner optimizes a sequence of macro-actions to bring its final predicted state close to the goal. Its predicted states then become subgoals for the planner below.</p>
-        <p>Each lower-level planner refines these subgoals over a shorter timescale. To compare its predictions with an upper-level subgoal, it maps them through the upper-level encoder. We optimize action sequences by gradient descent at every level. For closed-loop control, level 1 executes an action prefix, the model receives a new observation, and planning repeats.</p>
-        <figure>
-          <a class="figure-link" href="assets/figures/planning.png" target="_blank" rel="noopener" aria-label="Open the planning diagram at full size"><img src="assets/figures/planning.png" width="1990" height="868" alt="Top-down planning: level 2 predicts a coarse path toward the goal, and level 1 optimizes primitive actions to match the first level-2 subgoal." loading="lazy"></a>
-          <figcaption><strong>Fig. 3: From goals to subgoals to actions.</strong> In this two-level example, the coarse planner optimizes toward the final goal. The fine planner lifts its predicted state into level-2 space to match the first coarse subgoal.</figcaption>
+      </section>
+      <section id="hierarchical-planning" class="section">
+        <h2>Hierarchical planning</h2>
+        <p>H-JEPA plans from coarse to fine: higher levels propose latent subgoals, and lower levels refine them into primitive actions. Each lower-level planner compares its predictions with the assigned subgoal in the higher level’s latent space. After executing an action prefix, planning repeats from the new observation.</p>
+        <figure id="planning-animation" class="planning-animation">
+          <iframe src="assets/videos/hierarchical-planning.html?embed=1&amp;v=8bcabdd70d" title="Interactive hierarchical planning animation" loading="lazy"></iframe>
+          <figcaption><strong>Fig. 3: From goals to subgoals to actions.</strong> In this two-level example, the coarse planner optimizes toward the final goal. The fine planner lifts its predicted state into level-2 space to match the first coarse subgoal. <a href="assets/videos/hierarchical-planning.html" target="_blank" rel="noopener">Open the larger animation</a>.</figcaption>
         </figure>
       </section>
       <section id="results" class="section">
@@ -88,9 +92,17 @@
         <p>We evaluate navigation in <strong>Visual AntMaze</strong> and <strong>FourRoom Distractors</strong>, manipulation in <strong>Push-T</strong> and <strong>OGBench Cube</strong>, and offline planning on real robot trajectories from <strong>DROID</strong>. The flat baseline, LeWM, corresponds to training the first-level JEPA on its own.</p>
         <h3 id="abstractions">Learning abstractions</h3>
         <p>Higher levels selectively lose fast-varying information while retaining slower state. In AntMaze, the ant’s body configuration becomes less recoverable with depth, while its position remains accurately recoverable. In FourRoom, the independently moving distractor fades from higher-level representations while the controlled agent remains visible.</p>
-        <figure>
-          <a class="figure-link" href="assets/figures/abstractions.png" target="_blank" rel="noopener" aria-label="Open the abstraction results at full size"><img src="assets/figures/abstractions.png" width="1440" height="500" alt="Probing error increases with hierarchy depth for ant body state and distractor position, but stays low for agent position. Decoded images show the corresponding loss of fine detail." loading="lazy"></a>
-          <figcaption><strong>Fig. 4: Selective abstraction across hierarchy levels.</strong> Frozen probes measure how much state information each level retains; higher normalized error means less recoverable information. Decoders are trained after the world model, only for visualization. Probe results report mean and standard error over three training seeds.</figcaption>
+        <figure class="abstraction-figure">
+          <div class="abstraction-media">
+            <a class="abstraction-plots" href="assets/figures/depth_probes_wide.png" target="_blank" rel="noopener" aria-label="Open the depth probe plots at full size">
+              <img src="assets/figures/depth_probes_wide.png" width="1088" height="500" alt="Probe error increases with hierarchy depth for ant body state and distractor position, but stays low for agent position." loading="lazy">
+            </a>
+            <video width="1560" height="648" controls autoplay muted loop playsinline preload="metadata" aria-label="Selective abstraction in AntMaze and FourRoom across four hierarchy levels" aria-describedby="abstractions-caption">
+              <source src="assets/videos/selective_abstraction_lvl4.mp4?v=3a905228aa" type="video/mp4">
+              <a href="assets/videos/selective_abstraction_lvl4.mp4">Download the selective abstraction video.</a>
+            </video>
+          </div>
+          <figcaption id="abstractions-caption"><strong>Fig. 4: Selective abstraction across hierarchy levels.</strong> Above: frozen probes measure retained state information; higher normalized error means less recoverable information. Error bars show standard error over three training seeds. Below: ground-truth observations and decoded representations at levels 1–4 in AntMaze and FourRoom. Decoders are trained after the world model, only for visualization.</figcaption>
         </figure>
         <p>This selectivity is strongest when entities evolve at well-separated timescales. It is not universal: the manipulation datasets have smaller temporal-frequency gaps and show little selective abstraction.</p>
         <h3 id="planning-results">Planning performance</h3>
@@ -102,7 +114,7 @@
         <p>To isolate the value of distinct representations, we compare against HWM with matched data and training settings, replacing upper-level encoders with identity maps. HWM benefits from temporal hierarchy in a shared latent space. H-JEPA improves further on AntMaze and Cube; on AntMaze, three-level H-JEPA achieves nearly twice HWM’s success.</p>
         <h3 id="why-hierarchy">Why hierarchy helps</h3>
         <p><strong>A better space for measuring progress.</strong> A fine-grained representation may assign a large distance to states that differ in pose but are equally close to the goal. Projecting a level-1 rollout into a more abstract latent space improves planning even without invoking upper-level planners. Across every tested multilevel AntMaze model, at least one upper-level cost improves success over the native level-1 cost.</p>
-        <figure>
+        <figure class="figure-narrow">
           <a class="figure-link" href="assets/figures/goal-costs.png" target="_blank" rel="noopener" aria-label="Open the goal-cost visualization at full size"><img src="assets/figures/goal-costs.png" width="975" height="479" alt="Goal-cost surfaces in different latent spaces illustrate how upper-level representations change the planning objective." loading="lazy"></a>
           <figcaption><strong>Fig. 6: The representation changes the planning objective.</strong> Distances to the starred anchor in each latent space of a three-level AntMaze model (one training seed). Blue is near; red is far. Higher levels show more graded costs along corridors and a broader low-cost region around the anchor.</figcaption>
         </figure>
@@ -113,7 +125,7 @@
         </figure>
         <h3 id="droid">Real-world videos: DROID</h3>
         <p>DROID introduces variation in scenes, lighting, and objects across episodes. Here, a purely predictive objective can encode the stable background while discarding the moving robot. We add an <strong>inverse-dynamics loss</strong> that predicts the action connecting consecutive latent states, encouraging the representation to retain information about the agent.</p>
-        <figure class="scene-figure">
+        <figure class="figure-narrow">
           <a class="figure-link" href="assets/figures/scene-diversity.png" target="_blank" rel="noopener" aria-label="Open the scene comparison at full size"><img src="assets/figures/scene-diversity.png" width="784" height="520" alt="Example initial frames show a largely fixed scene in Cube and varied objects, viewpoints, and backgrounds in DROID." loading="lazy"></a>
           <figcaption><strong>Fig. 8: From a fixed scene to diverse real environments.</strong> First frames from three Cube and three DROID clips illustrate variation across episodes.</figcaption>
         </figure>
@@ -134,6 +146,10 @@
         <h2>Takeaway</h2>
         <p>H-JEPA learns world models at multiple timescales and levels of abstraction, end-to-end. Hierarchy helps in two complementary ways: it decomposes long-horizon planning into shorter subproblems, and it provides more abstract representations in which to measure progress toward a goal.</p>
         <p>Higher levels can learn to ignore fast, unpredictable detail while retaining slower state useful for planning. Combined with inverse-dynamics supervision for diverse real-world scenes, this offers a route toward more efficient visual planning from both simulated experience and real robot videos.</p>
+      </section>
+      <section id="references" class="section">
+        <h2>References</h2>
+        <p id="ref-lejepa">[1] Randall Balestriero and Yann LeCun. <a href="https://arxiv.org/abs/2511.08544">LeJEPA: Provable and Scalable Self-Supervised Learning Without the Heuristics</a>. arXiv:2511.08544, 2025.</p>
       </section>
       <section id="bibtex" class="bib-section">
         <div class="bib-heading"><h2>BibTeX</h2><button class="copy-button" type="button" hidden>Copy</button></div>

@@ -1,0 +1,174 @@
+% Hierarchical planning; input by main.tex as a complete figure.
+% Requires amsmath, xcolor, graphicx, tikz, backgrounds, fit and shapes.gates.logic.US.
+% Shape dimensions compensate for this canvas's smaller width than the training figure.
+\begin{figure}[t]
+\centering
+\resizebox{\textwidth}{!}{%
+\begin{tikzpicture}[
+    x=1cm,y=1cm,font=\fontsize{12.20}{14.64}\selectfont,
+    >={Stealth[length=3.62pt,width=2.81pt]},
+    panel/.style={draw=hjepaborder, line width=0.482pt, rounded corners=4.02pt},
+    objective/.style={draw=hjepacost!65, fill=hjepacostbg,
+        text=hjepacost, rounded corners=2.41pt, line width=0.482pt,
+        inner xsep=4.82pt, inner ysep=3.22pt},
+    costflow/.style={flow,draw=hjepacost},
+    flow/.style={->,draw=black!65,line width=0.523pt},
+    % Reference schematics: upward encoder gate, rightward predictor gate.
+    % Encoder labels are separate nodes so their text remains upright.
+    encoder/.style={and gate US,logic gate inputs=nn,
+        rotate=90,transform shape,xscale=0.90,yscale=1.17,
+        draw=black!65,fill=black!3,line width=0.523pt,
+        minimum width=0.868cm,minimum height=0.579cm,
+        inner xsep=4.02pt,inner ysep=1.61pt},
+    predictor/.style={and gate US,logic gate inputs=nn,
+        draw=black!65,fill=black!3,line width=0.523pt,
+        minimum width=0.942cm,minimum height=0.650cm,
+        inner xsep=0.804pt,inner ysep=0pt},
+    state/.style={text=hjepastate,inner sep=3pt},
+    action/.style={text=hjepaaction,inner sep=3pt},
+    heading/.style={text=hjepaheading,font=\sffamily\bfseries\fontsize{12.20}{14.64}\selectfont,anchor=west},
+    note/.style={font=\sffamily\fontsize{11.10}{13.32}\selectfont,text=black!65,inner sep=2pt},
+    level/.style={font=\sffamily\fontsize{10.00}{12.00}\selectfont,text=black!60,anchor=east},
+    omitted/.style={text=black!55,inner sep=3pt},
+]
+\definecolor{hjepastate}{HTML}{286494}
+\definecolor{hjepaaction}{HTML}{B76622}
+\definecolor{hjepaborder}{HTML}{B5C6D2}
+\definecolor{hjepaheader}{HTML}{EAF2F6}
+\definecolor{hjepaheading}{HTML}{29495D}
+\definecolor{hjepacost}{HTML}{77529C}
+\definecolor{hjepacostbg}{HTML}{F5F1FA}
+
+\path[use as bounding box] (-0.75,-0.657) rectangle (17.10,7.064);
+\begin{scope}[on background layer]
+    \begin{scope}
+        \clip[rounded corners=4.02pt] (-0.75,-0.657) rectangle (17.10,7.064);
+        \fill[hjepaheader] (-0.75,6.264) rectangle (17.10,7.064);
+    \end{scope}
+    \draw[panel] (-0.75,-0.657) rectangle (17.10,7.064);
+    \draw[hjepaborder,line width=0.402pt] (-0.75,6.264) -- (17.10,6.264);
+\end{scope}
+\node[heading] (title) at (-0.40,6.664) {Hierarchical planning};
+\node[note,anchor=base west,text=hjepaheading] at ([xshift=0.35cm]title.base east)
+    {Two-level example: subgoals $K_2=1$, stride $s_2=2$, window $w_2=1$};
+
+% Mirror-image initial and goal encoding columns.
+% Leave clear gaps around the level-1 encoders and align the observation labels.
+\def\lowerEncoderGap{0.42cm}
+\node[state] (zinitialone) at (1.45,2.10) {$z^{(1)}_0$};
+\node[encoder,anchor=output] (einitialone)
+    at ([yshift=-\lowerEncoderGap]zinitialone.south) {};
+\node[state,anchor=north] (o0)
+    at ([yshift=-\lowerEncoderGap]einitialone.west) {$o_0$};
+\node at (einitialone.center) {$E^{(1)}$};
+\coordinate (einitialonein) at ($(einitialone.input 1)!0.5!(einitialone.input 2)$);
+\coordinate (einitialoneout) at (einitialone.output);
+\node[encoder] (einitialtwo) at (1.45,3.85) {};
+\node at (einitialtwo.center) {$E^{(2)}$};
+\coordinate (einitialtwoin) at ($(einitialtwo.input 1)!0.5!(einitialtwo.input 2)$);
+\coordinate (einitialtwoout) at (einitialtwo.output);
+\node[state] (zinitialtwo) at (1.45,5.65) {$z^{(2)}_0$};
+\draw[flow] (o0.north) -- (einitialone.west);
+\draw[flow] (einitialone.output) -- (zinitialone.south);
+\draw[flow] (zinitialone) -- (einitialtwoin);
+\draw[flow] (einitialtwoout) -- (zinitialtwo);
+\node[note,anchor=base east] (initiallabel) at ([xshift=-0.12cm]o0.base west) {Initial};
+
+\node[state] (gone) at (16.25,2.10) {$g^{(1)}$};
+\node[encoder,anchor=output] (egoalone)
+    at ([yshift=-\lowerEncoderGap]gone.south) {};
+\node[state,anchor=north] (og)
+    at ([yshift=-\lowerEncoderGap-0.058cm]egoalone.west) {$o_g$};
+\node at (egoalone.center) {$E^{(1)}$};
+\coordinate (egoalonein) at ($(egoalone.input 1)!0.5!(egoalone.input 2)$);
+\coordinate (egoaloneout) at (egoalone.output);
+\node[encoder] (egoaltwo) at (16.25,3.85) {};
+\node at (egoaltwo.center) {$E^{(2)}$};
+\coordinate (egoaltwoin) at ($(egoaltwo.input 1)!0.5!(egoaltwo.input 2)$);
+\coordinate (egoaltwoout) at (egoaltwo.output);
+\node[state] (gtwo) at (16.25,5.65) {$g^{(2)}$};
+\draw[flow] (og.north) -- (egoalone.west);
+\draw[flow] (egoalone.output) -- (gone.south);
+\draw[flow] (gone) -- (egoaltwoin);
+\draw[flow] (egoaltwoout) -- (gtwo);
+\node[note,anchor=base east] (goallabel) at ([xshift=-0.12cm]og.base west) {Goal};
+\node[level] at (0.60,5.65) {Level 2};
+\node[level] at (0.60,2.10) {Level 1};
+
+% Coarse rollout: retain the first subgoal and show the terminal prediction.
+\node[predictor] (ftwofirst) at (4.20,5.65) {};
+\node at (ftwofirst.center) {$F^{(2)}$};
+\node[state] (subgoal) at (7.00,5.65) {$\hat z^{(2)}_1$};
+\node[omitted] (skipcoarse) at (8.45,5.65) {$\cdots$};
+\node[predictor] (ftwolast) at (9.90,5.65) {};
+\node at (ftwolast.center) {$F^{(2)}$};
+\node[state] (terminal) at (11.95,5.65) {$\hat z^{(2)}_{H_2}$};
+\node[objective] (costtwo) at (14.00,5.65) {$C^{(2)}$};
+\draw[flow] (zinitialtwo) -- (ftwofirst.west);
+\draw[flow] (ftwofirst.output) -- (subgoal);
+\draw[flow] (subgoal) -- (skipcoarse);
+\draw[flow] (skipcoarse) -- (ftwolast.west);
+\draw[flow] (ftwolast.output) -- (terminal);
+\draw[costflow] (terminal) -- (costtwo);
+\draw[costflow] (gtwo) -- (costtwo);
+\node[action,below=0.38cm of ftwofirst] (atwofirst) {$a^{(2)}_0$};
+\node[action,below=0.38cm of ftwolast] (atwolast) {$a^{(2)}_{H_2-1}$};
+\draw[flow] (atwofirst.north) -- (ftwofirst.south);
+\draw[flow] (atwolast.north) -- (ftwolast.south);
+
+% Fine rollout: show both predictions for the first two-step segment (s_2=2).
+\node[predictor] (fonefirst) at (2.85,2.10) {};
+\node at (fonefirst.center) {$F^{(1)}$};
+\node[state] (fineintermediate) at (4.225,2.10) {$\hat z^{(1)}_1$};
+\node[predictor] (fonelast) at (5.60,2.10) {};
+\node at (fonelast.center) {$F^{(1)}$};
+\node[state] (fineterminal) at (7.00,2.10) {$\hat z^{(1)}_2$};
+\draw[flow] (zinitialone) -- (fonefirst.west);
+\draw[flow] (fonefirst.output) -- (fineintermediate);
+\draw[flow] (fineintermediate) -- (fonelast.west);
+\draw[flow] (fonelast.output) -- (fineterminal);
+\foreach \suffix/\t in {first/0,last/1} {
+    \node[action,below=0.38cm of fone\suffix] (aone\suffix) {$a^{(1)}_{\t}$};
+    \draw[flow] (aone\suffix.north) -- (fone\suffix.south);
+}
+
+% Lift a predicted fine state and compare it with the optimized coarse subgoal.
+\node[encoder] (liftencoder) at (7.00,3.25) {};
+\node at (liftencoder.center) {$E^{(2)}$};
+\coordinate (liftencoderin) at ($(liftencoder.input 1)!0.5!(liftencoder.input 2)$);
+\coordinate (liftencoderout) at (liftencoder.output);
+\node[objective] (costone) at (7.00,4.45) {$C^{(1)}$};
+\draw[costflow] (fineterminal) -- (liftencoderin);
+\draw[costflow] (liftencoderout) -- (costone);
+\draw[costflow,line width=0.804pt] (subgoal) -- (costone)
+    node[midway,left=3pt,note,font=\sffamily\fontsize{11.10}{13.32}\selectfont\bfseries,text=hjepacost] {Subgoal};
+
+% Stack the cost descriptions.
+\def\descriptionGap{0.30cm}
+\node[anchor=south west,inner ysep=0pt] (finecosttext)
+    at (8.55,-0.251)
+    {$\textcolor{hjepacost}{C^{(1)}}=\bigl\|E^{(2)}(\textcolor{hjepastate}{\hat z^{(1)}_2})
+        -\textcolor{hjepastate}{\hat z^{(2)}_1}\bigr\|_2^2$};
+\node[note,anchor=south west,align=left,inner ysep=0pt] (finedescription)
+    at ([yshift=0.12cm]finecosttext.north west)
+    {Level 1: optimize $\textcolor{hjepaaction}{a^{(1)}_0,\,a^{(1)}_1}$\\first subgoal term shown};
+\node[anchor=south west,inner ysep=0pt] (coarsecosttext)
+    at ([yshift=\descriptionGap]finedescription.north west)
+    {$\textcolor{hjepacost}{C^{(2)}}=\bigl\|\textcolor{hjepastate}{\hat z^{(2)}_{H_2}}
+        -\textcolor{hjepastate}{g^{(2)}}\bigr\|_2^2$};
+\node[note,anchor=south west,align=left,inner ysep=0pt]
+    at ([yshift=0.12cm]coarsecosttext.north west)
+    {Level 2: optimize $\textcolor{hjepaaction}{a^{(2)}_{0:H_2-1}}$\\to minimize goal cost};
+\end{tikzpicture}%
+}% end resizebox
+\caption{\textbf{Planning runs top-down through the hierarchy, and the lower level
+is steered by subgoals the upper level predicted.}  Two-level instance ($L{=}2$) of
+\S\ref{sec:method-planning}.  Current and goal observations $o_0$ and $o_g$
+are encoded bottom-up into initial states $z^{(1)}_0, z^{(2)}_0$ and goal states
+$g^{(1)}, g^{(2)}$.  Level~2 optimizes macro-actions by unrolling $F^{(2)}$ and matching
+its final prediction to $g^{(2)}$.  Its predicted states $\hat z^{(2)}_i$ become subgoals
+for level~1, which optimizes primitive actions and lifts its predictions
+through $E^{(2)}$ for comparison in level-2 latent space
+(Eq.~\eqref{eq:lower-plan}).}
+\label{fig:hierarchical_planning}
+\end{figure}
