@@ -197,8 +197,11 @@
         <h3 id="droid">Real-world videos: DROID</h3>
         <p>DROID introduces variation in scenes, lighting, and objects across episodes. Here, a purely predictive objective can encode the stable background while discarding the moving robot. We add an <strong>inverse-dynamics loss</strong> that predicts the action connecting consecutive latent states, encouraging the representation to retain information about the agent.</p>
         <figure class="figure-narrow">
-          <a class="figure-link" href="assets/figures/scene-diversity.png" target="_blank" rel="noopener" aria-label="Open the scene comparison at full size"><img src="assets/figures/scene-diversity.png" width="784" height="520" alt="Example initial frames show a largely fixed scene in Cube and varied objects, viewpoints, and backgrounds in DROID." loading="lazy"></a>
-          <figcaption><strong>Fig. 5: From a fixed scene to diverse real environments.</strong> First frames from three Cube and three DROID clips illustrate variation across episodes.</figcaption>
+          <video width="832" height="560" controls autoplay muted loop playsinline preload="metadata" poster="assets/figures/scene-diversity.png" aria-label="Three Cube episodes in a largely fixed scene and three DROID clips with varied objects, viewpoints, and backgrounds" aria-describedby="scene-diversity-caption">
+            <source src="assets/videos/scene-diversity.mp4?v=9a7c872ae9" type="video/mp4">
+            <a href="assets/videos/scene-diversity.mp4">Download the scene comparison video.</a>
+          </video>
+          <figcaption id="scene-diversity-caption"><strong>Fig. 5: From a fixed scene to diverse real environments.</strong> Three Cube episodes and three DROID clips illustrate variation across episodes.</figcaption>
         </figure>
         <p>We evaluate plans offline using <strong>Fréchet fidelity</strong>, which compares the full three-dimensional end-effector path with an expert trajectory. A stationary arm scores 0%; the expert path scores 100%. This measures path fidelity, rather than closed-loop task success.</p>
         <div class="figure-pair">

@@ -12,6 +12,8 @@ Videos showing actual prediction and planning behavior would add the most value.
 
 4. **Completed: abstraction video in Learning abstractions.** [selective_abstraction_lvl4.mp4](selective_abstraction_lvl4.mp4) shows ground-truth observations alongside labeled decoded representations at levels 1–4 for AntMaze and FourRoom. It is embedded in Fig. 2, centered beneath the depth probe plots, with muted autoplay, looping, and playback controls.
 
+5. **Completed: scene diversity video in Real-world videos: DROID.** [scene-diversity.mp4](scene-diversity.mp4) is the video version of Fig. 5, with the same grid and row notes as the static figure (kept as its poster): three OGBench Cube episodes (executed H-JEPA plans, 10 fps) above three DROID evaluation clips (real recordings, 5 fps). Cube tiles hold their last frame until the longer DROID clips end.
+
 ## Suggested starting point
 
 Start with one compelling AntMaze rollout and the planning animation. Keep the static figures, use muted video with playback controls, and avoid adding motion everywhere.
