@@ -1,5 +1,5 @@
 const progress = document.querySelector('.reading-progress');
-document.querySelectorAll('.planning-animation iframe, .training-animation iframe').forEach(animationFrame => {
+document.querySelectorAll('.planning-animation iframe, .training-animation iframe, .idm-animation iframe').forEach(animationFrame => {
   let frameObserver;
   let visibleInViewport = false;
   const notifyVisibility = () => {

@@ -24,4 +24,8 @@ Start with one compelling AntMaze rollout and the planning animation. Keep the s
 
 Three stages cover encoding the trajectory (4 seconds), building the next level (4 seconds), and joint prediction/regularization with gradient flow (6 seconds). It includes the same playback, step-selection, timeline, and reduced-motion behavior as the planning animation.
 
-Both embedded animations reset and pause when they leave the viewport, then restart from the beginning when they return. Reduced-motion preferences keep them paused until the viewer presses Play.
+## Inverse-dynamics animation
+
+[Inverse dynamics](idm-schema.html) appears in Real-world videos: DROID, right after the paragraph introducing the inverse-dynamics loss. It reuses the hierarchy of the training animation (two levels, stride 2, state window 1) and adds purple arcs over the consecutive state pairs used at each level. Four stages cover building the hierarchy (4 seconds), pairing consecutive states (4 seconds), regressing the action from two states against the stop-gradient target (5 seconds), and adding the inverse-dynamics loss to each level's objective (4 seconds). Playback, step selection, and visibility handling are copied from the training animation.
+
+All three embedded animations reset and pause when they leave the viewport, then restart from the beginning when they return. Reduced-motion preferences keep them paused until the viewer presses Play.
