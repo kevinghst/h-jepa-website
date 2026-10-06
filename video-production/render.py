@@ -52,6 +52,20 @@ def base(chapter,dark=False):
  tx(d,(1824,52),chapter.upper(),22,'#9ab0bb' if dark else MUTED,anchor='ra')
  line(d,(96,100,1824,100),'#2d4452' if dark else '#dae0df')
  return im
+def appear(im,t,t0,draw,dur=.45,rise=18):
+ # Fade an element in from t0 while it rises into place.
+ a=ease((t-t0)/dur)
+ if a<=0:return im
+ layer=im.copy();draw(ImageDraw.Draw(layer),layer,round(rise*(1-a)))
+ return layer if a>=1 else Image.blend(im,layer,a)
+def supline(d,y,parts,size,col):
+ # Centered line of (text, superscript) parts.
+ f,fs=font(size),font(size);sw=[d.textlength(p,font=fs)+2 if p else 0 for _,p in parts]
+ x=960-sum(d.textlength(s,font=f)+w for (s,_),w in zip(parts,sw))/2
+ for (s,p),w in zip(parts,sw):
+  d.text((x,y),s,font=f,fill=col);x+=d.textlength(s,font=f)
+  if p:d.text((x+1,y),p,font=fs,fill=col)
+  x+=w
 def footer(im,t):
  d=ImageDraw.Draw(im);d.rectangle((0,1075,round(W*t/DURATION),1079),fill=TEAL)
 TITLES={
@@ -61,6 +75,7 @@ TITLES={
  'plan':'Hierarchical Planning with H-JEPA',
  'execute':'Planning in Action Across Four Environments',
  'results':'More Successful Planning with Less Compute',
+ 'idm':'Inverse Dynamics Keeps the Robot in the Latent',
  'droid':'Planning from Real-World Robot Video',
  'ending':'H-JEPA: Learn Abstractions. Plan Ahead.'
 }
@@ -100,10 +115,11 @@ class Clip:
   return self.last
  def close(self):
   if self.p:self.p.stdout.close();self.p.terminate();self.p.wait()
-SPECS=[('opening',10),('learn',12),('abstract',8),('plan',16),('execute',7),('results',8),('droid',8),('ending',7)]
+SPECS=[('opening',10),('learn',12),('abstract',8),('plan',16),('execute',7),('results',8),('idm',12),('droid',8),('ending',7)]
 DURATION=sum(duration for _,duration in SPECS)
 def clips(name):
  if name=='opening':return [(Clip(A.teaser,(1606,1080),10,speed=2.5,start=2),(0,0))]
+ if name=='idm':return [(Clip(PRODUCTION/'sources/idm-schema.mp4',(1390,663),12,(2340,1116,0,100),speed=17/12),(265,294))]
  if name=='droid':return [(Clip('assets/videos/scene-diversity.mp4',(810,238),8,(784,230,40,318),speed=1),(96,314))]
  if name=='learn':return [(Clip(PRODUCTION/'sources/hjepa-training.mp4',(1390,660),12,(1850,880,35,105),speed=14/12),(265,294))]
  if name=='abstract':return [(Clip('assets/videos/selective_abstraction_lvl4.mp4',(1680,698),8,speed=1),(120,303))]
@@ -148,9 +164,9 @@ def compose_opening(frame):
 
 def compose(name,t,frames):
  if name=='opening':return compose_opening(frames[0][0])
- dark=False; im=base({'opening':'Hierarchical world models','learn':'01 / Learn','abstract':'02 / Abstract','plan':'03 / Plan','execute':'04 / Execute','results':'05 / Results · Simulation','droid':'06 / Results · Real-world video','ending':'Explore the project'}[name],dark);d=ImageDraw.Draw(im)
+ dark=False; im=base({'opening':'Hierarchical world models','learn':'01 / Learn','abstract':'02 / Abstract','plan':'03 / Plan','execute':'04 / Execute','results':'05 / Results · Simulation','idm':'06 / Real-world video · Method','droid':'07 / Results · Real-world video','ending':'Explore the project'}[name],dark);d=ImageDraw.Draw(im)
  for f,pos in frames:
-  if f is not None:im.paste(f,pos)
+  if f is not None and name!='droid':im.paste(f,pos)
  heading(im,name)
  if name=='learn':
   tx(d,(98,247),'Each higher level learns to predict farther ahead.',30,MUTED)
@@ -180,25 +196,32 @@ def compose(name,t,frames):
   tx(d,(96,912),'Three levels lead on navigation and Cube; two levels work best on Push-T.',32,INK,True)
   tx(d,(96,974),'Bold curves show Pareto fronts. Error bars: one standard error over three seeds.',26,MUTED)
   tx(d,(96,1023),'Source: H-JEPA paper · h-jepa.com',23,MUTED)
+ elif name=='idm':
+  tx(d,(98,247),'Each level also predicts the action linking consecutive states.',30,MUTED)
+  phase=sum(t>=s*12/17 for s in (4,8,13))
+  stepbar(im,['Build the hierarchy','Pair consecutive states','Regress the action','Add to the objective'],phase)
  elif name=='droid':
   tx(d,(98,249),'DROID · Inverse-dynamics supervision + a learned hierarchy.',30,MUTED)
-  d=ImageDraw.Draw(im)
-  tx(d,(982,325),'Diverse scenes. More faithful plans.',38,INK,True)
-  tx(d,(984,393),'Offline evaluation of end-effector paths',30,MUTED)
-  tx(d,(984,438),'against expert trajectories.',30,MUTED)
-  tx(d,(984,510),'Higher Fréchet fidelity is better.',27,TEAL,True)
-  tx(d,(96,579),'Inverse dynamics and hierarchy',29,INK,True)
-  tx(d,(1000,579),'Fidelity versus planner compute',29,INK,True)
-  im.paste(figure('droid-ablation.png',(850,366)),(96,626))
-  im.paste(figure('droid-compute.png',(824,407)),(1000,616))
-  tx(ImageDraw.Draw(im),(96,1034),'IDM: inverse dynamics. Offline path fidelity; frozen-encoder references use their native 1 fps, ours use 5 fps.',22,MUTED)
+  clip,pos=frames[0]
+  im=appear(im,t,0,lambda d,L,o:L.paste(clip,(pos[0],pos[1]+o)))
+  im=appear(im,t,.4,lambda d,L,o:tx(d,(982,325+o),'Diverse scenes. More faithful plans.',38,INK,True))
+  im=appear(im,t,.8,lambda d,L,o:(tx(d,(984,393+o),'Offline evaluation of end-effector paths',30,MUTED),tx(d,(984,438+o),'against expert trajectories.',30,MUTED)))
+  im=appear(im,t,1.2,lambda d,L,o:tx(d,(984,510+o),'Higher Fréchet fidelity is better.',27,TEAL,True))
+  # Ablation bars wipe in left to right: no IDM, + IDM, HWM, H-JEPA.
+  fig,AX=figure('droid-ablation.png',(850,366)),118
+  im=appear(im,t,1.8,lambda d,L,o:(tx(d,(96,579+o),'Inverse dynamics and hierarchy',29,INK,True),L.paste(fig.crop((0,0,AX,366)),(96,626+o))))
+  w=max(0,min(1,(t-2.3)/1.8));w=AX+round((850-AX)*w*w*(3-2*w))
+  if t>2.3:im.paste(fig.crop((0,0,w,366)),(96,626))
+  im=appear(im,t,4.1,lambda d,L,o:(tx(d,(1000,579+o),'Fidelity versus planner compute',29,INK,True),L.paste(figure('droid-compute.png',(824,407)),(1000,616+o))),dur=.6)
+  im=appear(im,t,5.0,lambda d,L,o:tx(d,(96,1034),'IDM: inverse dynamics. Offline path fidelity; frozen-encoder references use their native 1 fps, ours use 5 fps.',22,MUTED),rise=0)
  elif name=='ending':
   tx(d,(960,497),'End-to-End Learning of Hierarchical World Models',36,MUTED,anchor='ma');tx(d,(960,548),'for Visual Planning',36,MUTED,anchor='ma')
   d.rounded_rectangle((656,649,1264,743),radius=20,fill='#77d8c4');tx(d,(960,664),'h-jepa.com',48,DARK,True,anchor='ma')
   tx(d,(960,779),'Paper + code',29,MUTED,anchor='ma')
-  tx(d,(960,899),'Wancong Zhang · Basile Terver · Michael Rabbat',28,MUTED,anchor='ma')
-  tx(d,(960,944),'Yann LeCun · Randall Balestriero',28,MUTED,anchor='ma')
-  tx(d,(960,1000),'NYU · Advanced Machine Intelligence · INRIA Paris · Brown University',23,MUTED,anchor='ma')
+  supline(d,872,[('Wancong Zhang','*'),(' · Basile Terver','*'),(' · Michael Rabbat','')],28,MUTED)
+  supline(d,917,[('Yann LeCun','†'),(' · Randall Balestriero','†')],28,MUTED)
+  supline(d,972,[('','*'),('Equal contribution    ',''),('','†'),('Equal advising','')],22,MUTED)
+  tx(d,(960,1012),'NYU · Advanced Machine Intelligence · INRIA Paris · Brown University',23,MUTED,anchor='ma')
  return im
 
 def soundtrack():

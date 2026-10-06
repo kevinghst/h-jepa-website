@@ -1,6 +1,6 @@
 # H-JEPA promotional video
 
-This folder reproduces the approved **76-second, 1920 × 1080, 30 fps** cut
+This folder reproduces the approved **88-second, 1920 × 1080, 30 fps** cut
 (approved opening with L1 ← L2 ← L3 above the maze). It contains the renderer, additional source clips,
 and optional subtitles. Other footage and plots are reused from the repository's
 `assets/` directory. The instrumental soundtrack is synthesized by the renderer.
@@ -83,8 +83,9 @@ can be selected with `IMAGEIO_FFMPEG_EXE=/path/to/ffmpeg`.
 | 0:30–0:46 | 16 s | Hierarchical planning |
 | 0:46–0:53 | 7 s | Four-environment execution grid |
 | 0:53–1:01 | 8 s | Simulation Pareto results |
-| 1:01–1:09 | 8 s | DROID videos and results |
-| 1:09–1:16 | 7 s | Project link and credits |
+| 1:01–1:13 | 12 s | Inverse dynamics at each level (DROID method) |
+| 1:13–1:21 | 8 s | DROID videos and results |
+| 1:21–1:28 | 7 s | Project link and credits |
 
 In `render.py`, `TITLES` controls the eight headings, `SPECS` controls scene
 durations, `clips()` specifies crops and playback rates, and `compose()` lays
@@ -104,6 +105,7 @@ subtitle timing is not automatically inferred from `SPECS`.
 | `sources/hierarchical_planning_sliding_new.mp4` | Opening: source seconds 2–27 at 2.5×, decoded at 1606 × 1080. Maze crop `(1222, 872, 32, 84)`; each decoded panel is 296 × 296 at x=1282 and y=740/412/84 for L1/L2/L3. The source heading is omitted. |
 | `sources/hjepa-training.mp4` | Training illustration: 14 seconds shown in 12 seconds. |
 | `sources/hjepa-planning.mp4` | Planning illustration: 18 seconds shown in 16 seconds. |
+| `sources/idm-schema.mp4` | Inverse-dynamics illustration (`../assets/videos/idm-schema.html`, diagram only, recorded frame-exact at 2×): 17 seconds shown in 12 seconds, crop `(2340, 1116, 0, 100)` drops the top caption line. |
 | `../assets/videos/selective_abstraction_lvl4.mp4` | First eight seconds at normal playback speed. |
 | `../assets/videos/executions/fourroom/fourroom_ep28.mp4` | FourRoom execution comparison, about 1.2× playback. |
 | `../assets/videos/executions/ant/ant_ep35.mp4` | AntMaze execution comparison, about 1.9× playback. |

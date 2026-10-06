@@ -58,16 +58,26 @@ Three levels lead on navigation and Cube;
 two levels work best on Push-T.
 
 14
-00:01:01,300 --> 00:01:05,000
+00:01:01,300 --> 00:01:07,000
+On real robot video, each level also learns inverse dynamics:
+predict the action linking two consecutive states.
+
+15
+00:01:07,100 --> 00:01:12,800
+The inverse-dynamics loss joins prediction and SIGReg
+in every level's objective.
+
+16
+00:01:13,300 --> 00:01:17,000
 DROID: planning from real-world robot video.
 Inverse-dynamics supervision plus a learned hierarchy.
 
-15
-00:01:05,100 --> 00:01:08,800
+17
+00:01:17,100 --> 00:01:20,800
 More faithful plans across diverse scenes.
 Offline evaluation of end-effector paths against expert trajectories.
 
-16
-00:01:09,300 --> 00:01:15,900
+18
+00:01:21,300 --> 00:01:27,900
 H-JEPA: Learn abstractions. Plan ahead.
 Paper and code at h-jepa.com.
