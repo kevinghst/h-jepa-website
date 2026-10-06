@@ -29,3 +29,10 @@ python3 scripts/export_paper_assets.py /Users/kevin/Desktop/hjepa_paper
 ```
 
 The export utility needs PyMuPDF; the website does not. Check the cropped method diagrams after any paper layout changes. Website prose is edited separately so it remains a readable summary of the paper.
+
+## Promotional video
+
+[video-production/](video-production/README.md) contains the renderer, source clips,
+captions, and rebuild instructions for the 76-second promotional video. It reuses
+tracked footage and figures from `assets/`. Rendering runs locally and is
+independent of the website; generated output is gitignored.

@@ -1,2 +1,7 @@
 .DS_Store
 Screenshot*.png
+
+# Local video production dependencies and generated renders.
+/video-production/.venv/
+/video-production/output/
+/video-production/__pycache__/

@@ -1,0 +1,73 @@
+1
+00:00:00,400 --> 00:00:09,800
+H-JEPA: Hierarchical World Models for Visual Planning.
+
+2
+00:00:10,300 --> 00:00:13,400
+Encode observations and actions.
+
+3
+00:00:13,500 --> 00:00:16,800
+Build a hierarchy across timescales.
+
+4
+00:00:16,900 --> 00:00:21,800
+Train jointly: each higher level predicts
+farther ahead in its own learned latent space.
+
+5
+00:00:22,200 --> 00:00:25,667
+Higher levels abstract away fast details.
+AntMaze representations retain position.
+
+6
+00:00:25,733 --> 00:00:29,867
+In FourRoom, the controlled agent remains
+while the moving distractor fades.
+
+7
+00:00:30,300 --> 00:00:33,500
+Encode the current observation and the goal.
+
+8
+00:00:33,600 --> 00:00:37,000
+Plan toward the goal at a coarse level.
+
+9
+00:00:37,100 --> 00:00:42,300
+High-level predictions become subgoals.
+Refine them into primitive actions.
+
+10
+00:00:42,400 --> 00:00:45,800
+Act, observe and replan.
+
+11
+00:00:46,300 --> 00:00:52,800
+FourRoom, Visual AntMaze, Push-T and Cube:
+LeWM and H-JEPA example executions, alongside the goal.
+
+12
+00:00:53,300 --> 00:00:57,000
+Success versus planning compute:
+Pareto plots across four simulated environments.
+
+13
+00:00:57,100 --> 00:01:00,800
+Three levels lead on navigation and Cube;
+two levels work best on Push-T.
+
+14
+00:01:01,300 --> 00:01:05,000
+DROID: planning from real-world robot video.
+Inverse-dynamics supervision plus a learned hierarchy.
+
+15
+00:01:05,100 --> 00:01:08,800
+More faithful plans across diverse scenes.
+Offline evaluation of end-effector paths against expert trajectories.
+
+16
+00:01:09,300 --> 00:01:15,900
+H-JEPA: Learn abstractions. Plan ahead.
+Paper and code at h-jepa.com.
