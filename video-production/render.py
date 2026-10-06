@@ -15,11 +15,15 @@ P.add_argument('--teaser', type=pathlib.Path, help='Optional replacement opening
 P.add_argument('--font-regular', type=pathlib.Path, help='Regular TTF/OTF font (face index 0).')
 P.add_argument('--font-semibold', type=pathlib.Path, help='Semibold TTF/OTF font (face index 0).')
 P.add_argument('--preview', action='store_true', help='Render a storyboard without the full video.')
+P.add_argument('--preview-opening-pareto', action='store_true',
+               help='Render only a proposed opening layout with the AntMaze Pareto plot.')
+P.add_argument('--preview-opening-decoding', action='store_true',
+               help='Render a still of the current opening with decoded subgoals and the Pareto plot.')
 A = P.parse_args()
 ROOT = A.repo.expanduser().resolve()
 PRODUCTION = ROOT / 'video-production'
 OUT = (A.out or PRODUCTION / 'output').expanduser().resolve()
-A.teaser = (A.teaser or PRODUCTION / 'sources/hierarchical_planning_sliding.mp4').expanduser().resolve()
+A.teaser = (A.teaser or PRODUCTION / 'sources/hierarchical_planning_sliding_new.mp4').expanduser().resolve()
 DEFAULT_FONT = pathlib.Path('/System/Library/Fonts/Avenir Next.ttc')
 REGULAR_FONT = (A.font_regular or DEFAULT_FONT).expanduser().resolve()
 SEMIBOLD_FONT = (A.font_semibold or DEFAULT_FONT).expanduser().resolve()
@@ -99,7 +103,7 @@ class Clip:
 SPECS=[('opening',10),('learn',12),('abstract',8),('plan',16),('execute',7),('results',8),('droid',8),('ending',7)]
 DURATION=sum(duration for _,duration in SPECS)
 def clips(name):
- if name=='opening':return [(Clip(A.teaser,(1416,744),10,(1828,960,32,84),speed=2.5,start=2),(252,276))]
+ if name=='opening':return [(Clip(A.teaser,(1606,1080),10,speed=2.5,start=2),(0,0))]
  if name=='droid':return [(Clip('assets/videos/scene-diversity.mp4',(810,238),8,(784,230,40,318),speed=1),(96,314))]
  if name=='learn':return [(Clip(PRODUCTION/'sources/hjepa-training.mp4',(1390,660),12,(1850,880,35,105),speed=14/12),(265,294))]
  if name=='abstract':return [(Clip('assets/videos/selective_abstraction_lvl4.mp4',(1680,698),8,speed=1),(120,303))]
@@ -118,14 +122,37 @@ def figure(name,size,crop=None):
   if crop:img=img.crop(crop)
   figures[key]=img.resize(size,Image.Resampling.LANCZOS)
  return figures[key]
+def opening_arrow(d,x,y):
+ line(d,(x,y,x+23,y),MUTED,3)
+ line(d,(x+7,y-7,x,y,x+7,y+7),MUTED,3)
+
+def compose_opening(frame):
+ im=base('Learn abstractions. Plan ahead.');d=ImageDraw.Draw(im)
+ heading(im,'opening')
+ tx(d,(560,304),'Decoded subgoals across three levels',31,INK,True,anchor='ma')
+ tx(d,(1144,331),'Higher success with less compute',31,INK,True)
+ labels=['Shorter horizon','Intermediate horizon','Longer horizon']
+ # L1, L2, L3 read left to right; refinement flows leftward from L3 to L1.
+ for i,(x,sy) in enumerate(zip((172,448,724),(740,412,84))):
+  tx(d,(x+112,352),labels[i],22,MUTED,anchor='ma')
+  tile=frame.crop((1282,sy,1578,sy+296))
+  im.paste(tile.resize((224,224),Image.Resampling.LANCZOS),(x,386))
+  if i<2:opening_arrow(d,x+238,498)
+ # All views use one source frame, keeping decoded subgoals and maze in sync.
+ maze=frame.crop((32,84,1254,956))
+ im.paste(maze.resize((560,400),Image.Resampling.LANCZOS),(280,626))
+ im.paste(figure('overview.png',(680,698),crop=(1450,60,2375,1010)),(1144,375))
+ tx(d,(1144,295),'VISUAL ANTMAZE',21,MUTED,True)
+ tx(d,(96,1033),'Illustrative planning · recorded observations and decoded states · 2.5× playback',20,MUTED)
+ return im
+
 def compose(name,t,frames):
+ if name=='opening':return compose_opening(frames[0][0])
  dark=False; im=base({'opening':'Hierarchical world models','learn':'01 / Learn','abstract':'02 / Abstract','plan':'03 / Plan','execute':'04 / Execute','results':'05 / Results · Simulation','droid':'06 / Results · Real-world video','ending':'Explore the project'}[name],dark);d=ImageDraw.Draw(im)
  for f,pos in frames:
   if f is not None:im.paste(f,pos)
  heading(im,name)
- if name=='opening':
-  tx(d,(960,1035),'Illustrative planning · recorded observations and decoded states · 2.5× playback',24,MUTED,anchor='ma')
- elif name=='learn':
+ if name=='learn':
   tx(d,(98,247),'Each higher level learns to predict farther ahead.',30,MUTED)
   stepbar(im,['Encode observations + actions','Build the next level','Train jointly'],min(2,int(t/(12/14*4))))
  elif name=='abstract':
@@ -199,9 +226,34 @@ def soundtrack():
  aud*=fade[:,None]; aud=np.tanh(aud)*.6
  with wave.open(str(OUT/'soundtrack.wav'),'wb') as f:f.setnchannels(2);f.setsampwidth(2);f.setframerate(sr);f.writeframes((aud*32767).astype('<i2').tobytes())
 
+def opening_pareto_preview(include_decoding=False):
+ # Share the current layout with the movie so the approved still cannot drift.
+ if include_decoding:
+  frames = [(clip.frame(t=4.8), pos) for clip, pos in clips('opening')]
+  im = compose('opening', 4.8, frames)
+  footer(im, 4.8)
+  target = OUT / 'opening-pareto-decoding-preview.png'
+  im.save(target)
+  print('PREVIEW', target, flush=True)
+  return
+ # Retain the earlier maze-only layout as a preview-only alternative.
+ im = base('Hierarchical world models')
+ heading(im, 'opening')
+ d = ImageDraw.Draw(im)
+ tx(d, (596, 269), 'Hierarchical MPC with subgoals across timescales', 23, MUTED, True, anchor='ma')
+ # At source t=14s the three subgoal markers and the destination are visible.
+ tx(d, (1489, 269), 'Visual AntMaze: Success versus planning compute', 23, MUTED, True, anchor='ma')
+ maze = Clip(A.teaser, (1000, 714), 10, (1222, 872, 32, 84), speed=2.5, start=2)
+ im.paste(maze.frame(t=4.8), (96, 305))
+ im.paste(figure('overview.png', (670, 688), crop=(1450, 60, 2375, 1010)), (1154, 318))
+ footer(im, 4.8)
+ target = OUT / 'opening-pareto-preview.png'
+ im.save(target)
+ print('PREVIEW', target, flush=True)
+
 required = {pathlib.Path(clip.path) for name, _ in SPECS for clip, _ in clips(name)}
 required.update(ROOT/'assets/figures'/name for name in (
- 'planning-results-pareto.png', 'droid-ablation.png', 'droid-compute.png'))
+ 'overview.png', 'planning-results-pareto.png', 'droid-ablation.png', 'droid-compute.png'))
 required.add(PRODUCTION/'captions.srt')
 missing = sorted(str(path) for path in required if not path.is_file())
 if missing:
@@ -212,7 +264,11 @@ for title in TITLES.values():
   P.error('Selected semibold font makes a title too wide: ' + title)
 OUT.mkdir(parents=True,exist_ok=True)
 
-if A.preview:
+if A.preview_opening_decoding:
+ opening_pareto_preview(include_decoding=True)
+elif A.preview_opening_pareto:
+ opening_pareto_preview()
+elif A.preview:
  sheet=Image.new('RGB',(960*2,540*4),'white')
  for i,(name,dur) in enumerate(SPECS):
   cc=clips(name);t=dur*.68; im=compose(name,t,[(c.frame(t),pos) for c,pos in cc]);im.save(OUT/f'preview_{name}.jpg',quality=93);sheet.paste(im.resize((960,540)),((i%2)*960,(i//2)*540))

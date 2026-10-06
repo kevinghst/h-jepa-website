@@ -1,7 +1,7 @@
 # H-JEPA promotional video
 
 This folder reproduces the approved **76-second, 1920 × 1080, 30 fps** cut
-(demo 1, revision 5). It contains the renderer, three additional source clips,
+(approved opening with L1 ← L2 ← L3 above the maze). It contains the renderer, additional source clips,
 and optional subtitles. Other footage and plots are reused from the repository's
 `assets/` directory. The instrumental soundtrack is synthesized by the renderer.
 
@@ -38,6 +38,24 @@ directory when the interpreter and script are addressed by absolute path.
 Use `--out /path/to/output` for a different render destination. Only the default
 output directory is covered by the repository's ignore rule.
 
+To preview just the current opening, including decoded subgoals and the
+AntMaze Pareto plot:
+
+```sh
+video-production/.venv/bin/python video-production/render.py --preview-opening-decoding
+```
+
+This writes `opening-pareto-decoding-preview.png` using the same composition
+as the full movie. `--preview-opening-pareto` keeps the earlier maze-only
+alternative available as a static preview.
+
+The opening title is “H-JEPA: Hierarchical World Models for Visual Planning”,
+with no subtitle. Three 224-pixel decoded views appear in a row ordered L1,
+L2, L3; arrows point leftward from L3 to L2 to L1. A 560 × 400 overhead maze
+is centered beneath them. The AntMaze success–compute plot appears on the
+right under “Higher success with less compute”. The illustrative-footage
+disclosure and 2.5× playback label remain at the bottom.
+
 ### Fonts and FFmpeg
 
 The approved typography uses **Avenir Next**, supplied by macOS. The renderer
@@ -59,7 +77,7 @@ can be selected with `IMAGEIO_FFMPEG_EXE=/path/to/ffmpeg`.
 
 | Time | Duration | Scene |
 | --- | ---: | --- |
-| 0:00–0:10 | 10 s | Hierarchical planning teaser |
+| 0:00–0:10 | 10 s | Compact planning teaser, decoded subgoals, and AntMaze Pareto plot |
 | 0:10–0:22 | 12 s | Learning predictive hierarchies |
 | 0:22–0:30 | 8 s | Selective abstraction |
 | 0:30–0:46 | 16 s | Hierarchical planning |
@@ -70,7 +88,8 @@ can be selected with `IMAGEIO_FFMPEG_EXE=/path/to/ffmpeg`.
 
 In `render.py`, `TITLES` controls the eight headings, `SPECS` controls scene
 durations, `clips()` specifies crops and playback rates, and `compose()` lays
-out each slide. Clip crops use `(width, height, x, y)` in source pixels.
+out each slide; `compose_opening()` arranges the synchronized maze and decoded
+views from one source frame. Clip crops use `(width, height, x, y)` in source pixels.
 Clip durations and `SPECS` should agree. Total duration, the progress bar,
 and soundtrack length are calculated from `SPECS`.
 
@@ -82,7 +101,7 @@ subtitle timing is not automatically inferred from `SPECS`.
 
 | Source | Use |
 | --- | --- |
-| `sources/hierarchical_planning_sliding.mp4` | Opening: source seconds 2–27 at 2.5×, cropped to remove the embedded heading. Maze, subgoal levels, observation panels, and goal completion remain visible. |
+| `sources/hierarchical_planning_sliding_new.mp4` | Opening: source seconds 2–27 at 2.5×, decoded at 1606 × 1080. Maze crop `(1222, 872, 32, 84)`; each decoded panel is 296 × 296 at x=1282 and y=740/412/84 for L1/L2/L3. The source heading is omitted. |
 | `sources/hjepa-training.mp4` | Training illustration: 14 seconds shown in 12 seconds. |
 | `sources/hjepa-planning.mp4` | Planning illustration: 18 seconds shown in 16 seconds. |
 | `../assets/videos/selective_abstraction_lvl4.mp4` | First eight seconds at normal playback speed. |
@@ -91,6 +110,7 @@ subtitle timing is not automatically inferred from `SPECS`.
 | `../assets/videos/executions/pusht/pusht_ep7.mp4` | Push-T execution comparison, about 1.1× playback. |
 | `../assets/videos/executions/cube/cube_30_ep2.mp4` | Cube execution comparison at original playback speed. |
 | `../assets/videos/scene-diversity.mp4` | First eight seconds at normal speed; `(784, 230, 40, 318)` selects only the three DROID videos. |
+| `../assets/figures/overview.png` | Opening AntMaze Pareto plot, cropped to `(left=1450, top=60, right=2375, bottom=1010)` with its axes, legend, and error bars preserved. |
 | `../assets/figures/planning-results-pareto.png` | All four simulation success-versus-compute plots, including axes, legend, and error bars. |
 | `../assets/figures/droid-ablation.png` | DROID inverse-dynamics/hierarchy bar chart. |
 | `../assets/figures/droid-compute.png` | DROID fidelity-versus-compute plot. |
@@ -100,9 +120,11 @@ training/planning exports. Their editable diagrams remain in
 [`hierarchical-training-interleaved.html`](../assets/videos/hierarchical-training-interleaved.html)
 and [`hierarchical-planning.html`](../assets/videos/hierarchical-planning.html).
 The separate `assets/videos/hierarchical_planning/` experiment is not used.
+The older `sources/hierarchical_planning_sliding.mp4` is retained for previous
+cuts; the current opening uses the compact `_new` clip.
 
-The opening teaser was supplied separately and is labeled as **illustrative
-planning using recorded observations and decoded states**. Use `--teaser PATH`
+The opening teaser was supplied separately and shows **illustrative planning
+using recorded observations and decoded states**, played at 2.5×. Use `--teaser PATH`
 to select another compatible source. No model inference is run during rendering.
 
 Project claims and evaluation context follow `../index.html`. Execution clips
