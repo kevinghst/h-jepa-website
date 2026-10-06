@@ -23,9 +23,7 @@ def main():
     args = parser.parse_args()
     root = Path(__file__).resolve().parents[1]
     figures = root / "assets/figures"
-    paper = root / "assets/paper"
     figures.mkdir(parents=True, exist_ok=True)
-    paper.mkdir(parents=True, exist_ok=True)
     with fitz.open(args.paper_dir / "main_release.pdf") as pdf:
         # These bounds match the release PDF dated October 2, 2026.
         diagrams = [("training", 2, 239), ("planning", 3, 254)]
@@ -41,8 +39,7 @@ def main():
             ).save(figures / f"{name}.png")
     for name, source in FIGURES.items():
         shutil.copy2(args.paper_dir / "figures" / f"{source}.png", figures / f"{name}.png")
-    shutil.copy2(args.paper_dir / "main_release.pdf", paper / "h-jepa.pdf")
-    print("Exported 10 figures and the release PDF. Review the method crops before publishing.")
+    print("Exported 10 figures. Review the method crops before publishing.")
 
 
 if __name__ == "__main__":
